@@ -1,0 +1,40 @@
+[workspace]
+members = [
+    "patch-build-rs-macros",
+    "mkslop-core",
+    "mkslop-macros",
+    # Eventually, we will add a binary crate here, e.g., "patch-build-cli"
+]
+
+[workspace.dependencies]
+syn = { version = "2.0", features = ["full", "extra-traits", "visit-mut"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+anyhow = "1.0"
+toml = "0.8"
+toml_edit = "0.23"
+serde = { version = "1.0", features = ["derive"] }
+walkdir = "2.5"
+
+[package]
+name = "patch-build-rs"
+version = "0.1.0"
+edition = "2021"
+description = "A core library and tools for applying semantic patches to Rust code."
+license = "MIT"
+# This is a placeholder for the main library if it's not a workspace root itself
+# [lib]
+# path = "src/lib.rs"
+
+[dependencies]
+patch-build-rs-macros = { path = "patch-build-rs-macros" }
+anyhow = { workspace = true }
+toml = { workspace = true }
+toml_edit = { workspace = true }
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+serde = { workspace = true }
+walkdir = { workspace = true }
+# Add a dependency to rust-self-heal-core once it's set up and available
+# rust-self-heal-core = { path = "../rust-self-heal-core" }

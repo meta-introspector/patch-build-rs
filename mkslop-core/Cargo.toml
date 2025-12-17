@@ -1,0 +1,11 @@
+[package]
+name = "mkslop-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Dependencies required for pattern matching and rewriting within the core logic
+syn = { workspace = true, features = ["full", "extra-traits"] }
+quote = { workspace = true }
+proc-macro2 = { workspace = true } # For Span::call_site() and TokenStream handling
+anyhow = { workspace = true } # For error handling
