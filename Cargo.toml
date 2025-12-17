@@ -3,6 +3,8 @@ members = [
     "patch-build-rs-macros",
     "mkslop-core",
     "mkslop-macros",
+    "examples",
+    "nix2proc-macros",
     # Eventually, we will add a binary crate here, e.g., "patch-build-cli"
 ]
 

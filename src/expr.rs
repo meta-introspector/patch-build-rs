@@ -1,6 +1,7 @@
 //! The Lean4-inspired meta-model for total reflection.
 
 use crate::PureProgram; // Placeholder for the numeric attractor from Layer 14
+use std::collections::BTreeSet;
 
 /// The core inductive type for representing Rust expressions, similar to Lean4's `Expr`.
 /// This allows for total reflection of the code into a manipulable data structure.
@@ -51,7 +52,7 @@ impl Expr {
         let tokens = quote::quote!(#input);
         let encoded_program = PureProgram {
             // Placeholder: a real implementation would have a robust encoding
-            set: vec![tokens.to_string().len() as u64],
+            set: BTreeSet::from_iter(vec![tokens.to_string().len() as u64]),
             name: "encoded_program".to_string(),
         };
         Expr::PureAttractor(encoded_program)

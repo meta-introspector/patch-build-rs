@@ -9,6 +9,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 
 [[package]]
+name = "basic-build-script-example"
+version = "0.1.0"
+dependencies = [
+ "mkslop-macros",
+ "nix2proc-macros",
+ "patch-build-rs-macros",
+]
+
+[[package]]
 name = "darling"
 version = "0.20.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -105,6 +114,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "nix2proc-macros"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "patch-build-rs"
 version = "0.1.0"
 dependencies = [
@@ -125,6 +144,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "darling",
+ "mkslop-macros",
  "proc-macro2",
  "quote",
  "serde",

@@ -1,6 +1,5 @@
-use quote::ToTokens;
 use syn::LitStr;
-use proc_macro2::Span; // Use proc_macro2::Span
+ // Use proc_macro2::Span
 
 /// Applies common auto-fixes to problematic format strings.
 ///

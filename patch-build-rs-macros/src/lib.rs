@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
-use quote::{quote, ToTokens};
-use syn::parse::{Parse, ParseStream, Result as SynResult, ParseBuffer};
+use quote::quote;
+use syn::parse::{Parse, ParseStream, Result as SynResult};
 use syn::{parse_macro_input, Ident, LitStr, Token};
 
 /// Represents a single `cfg` item to be generated in `build.rs`.
@@ -327,26 +327,3 @@ pub fn mkbuildrs(input: TokenStream) -> TokenStream {
     output.into()
 }
 
-/// A procedural macro to apply common auto-fixes to AI-generated code,
-/// especially format string issues.
-///
-/// This specific invocation aims to fix the `invalid format string` error
-/// that occurs when `format!` is given a string literal containing unescaped
-/// quotes and braces that confuse its own parsing.
-#[proc_macro]
-pub fn mkslop(input: TokenStream) -> TokenStream {
-    // Parse the input as a single LitStr
-    let input_lit = parse_macro_input!(input as LitStr);
-
-    let bad_format_str_value = "cargo:rustc-cfg={0}=\"{1}\"" ;
-
-    if input_lit.value() == bad_format_str_value {
-        // Rewrite the string to use raw string literal format, which correctly handles inner quotes
-        let corrected_format_str_value = r#"cargo:rustc-cfg={0}\"{1}\""#;
-        let corrected_lit_str = LitStr::new(&corrected_format_str_value, input_lit.span());
-        return corrected_lit_str.to_token_stream().into();
-    }
-    
-    // If not the specific bad string, return input unchanged
-    input_lit.to_token_stream().into()
-}

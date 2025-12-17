@@ -1,0 +1,17 @@
+[package]
+name = "basic-build-script-example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+patch-build-rs-macros = { path = "../patch-build-rs-macros" }
+mkslop-macros = { path = "../mkslop-macros" }
+nix2proc-macros = { path = "../nix2proc-macros" }
+
+[[bin]]
+name = "basic-build-script-example"
+path = "basic_build_script.rs"
+
+[[bin]]
+name = "find-rustc-example"
+path = "find_rustc_example.rs"
