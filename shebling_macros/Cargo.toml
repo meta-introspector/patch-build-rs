@@ -1,0 +1,26 @@
+[package]
+name = "shebling_macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "1.0", features = ["full", "extra-traits"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+brush-parser = "0.3" # For parsing shell scripts into an AST
+rustsat = "0.7"
+rustsat-batsat = "0.1"
+asdi = "0.2" # For Datalog engine integration
+# Add shebling as a path dependency once it's compiled as a library or its output format is understood.
+# For now, we'll assume external execution.
+
+# Used for executing external commands within a proc-macro
+# Note: This is an advanced use case and typically requires a helper crate
+# or careful management of target/host compilation.
+# For this demonstration, we'll simulate it, or assume a helper binary.
+# (Actual Command execution in a proc macro is tricky due to build environment separation)

@@ -2,11 +2,15 @@
 name = "basic-build-script-example"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 patch-build-rs-macros = { path = "../patch-build-rs-macros" }
 mkslop-macros = { path = "../mkslop-macros" }
 nix2proc-macros = { path = "../nix2proc-macros" }
+
+[build-dependencies]
+patch-build-rs-macros = { path = "../patch-build-rs-macros" }
 
 [[bin]]
 name = "basic-build-script-example"

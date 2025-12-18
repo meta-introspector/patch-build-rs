@@ -1,0 +1,3 @@
+[submodule "submodules/shebling"]
+	path = submodules/shebling
+	url = https://github.com/meta-introspector/shebling/

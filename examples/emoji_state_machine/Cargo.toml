@@ -1,0 +1,12 @@
+[package]
+name = "emoji-state-machine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rocket-macro = { path = "../../emoji-macros/rocket-macro" }
+scroll-macro = { path = "../../emoji-macros/scroll-macro" }
+
+[build-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

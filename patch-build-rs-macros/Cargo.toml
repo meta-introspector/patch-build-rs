@@ -7,6 +7,7 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
+grast_core = { path = "../grast_core" }
 syn = { workspace = true, features = ["full", "extra-traits", "visit-mut"] }
 quote = { workspace = true }
 proc-macro2 = { workspace = true }
@@ -14,7 +15,15 @@ darling = "0.20" # Not in workspace, keep explicit version
 serde = { workspace = true }
 anyhow = { workspace = true }
 mkslop-macros = { path = "../mkslop-macros" }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+once_cell = { workspace = true }
+directories = { workspace = true }
 
 [features]
 default = []
 test_build = [] # For testing build.rs generation
+
+[dev-dependencies]
+tempfile = "0.3"
+

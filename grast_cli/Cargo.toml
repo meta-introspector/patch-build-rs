@@ -1,0 +1,11 @@
+[package]
+name = "grast_cli"
+version = "0.1.0"
+edition = "2021"
+description = "CLI tool for Greppable AST (GRAST) representation and manipulation."
+license = "MIT"
+
+[dependencies]
+grast_core = { path = "../grast_core" }
+anyhow = { workspace = true }
+syn = { workspace = true } # Needed for parsing files in CLI

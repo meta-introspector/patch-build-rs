@@ -1,0 +1,38 @@
+{
+  "script_name": "find-code.sh",
+  "description": "Searches for Rust code using ripgrep based on predefined keywords.",
+  "operations": [
+    {
+      "type": "variable_definition",
+      "name": "KEYWORDS_JSON",
+      "value_source": "literal_string",
+      "content": "{ \"directory_scanning\": [\"std::fs::read_dir\", \"walkdir\", \"Path::new\", \"PathBuf\", \"fs::metadata\", \"is_dir\", \"is_file\"], \"file_reading\": [\"std::fs::read_to_string\", \"File::open\", \"BufReader\", \"lines()\"], \"code_quoting_rust\": [\"proc_macro2::TokenStream\", \"quote!\", \"syn::\", \"parse_macro_input!\", \"to_tokens\"] }"
+    },
+    {
+      "type": "variable_definition",
+      "name": "SEARCH_PATTERN",
+      "value_source": "command_output",
+      "command": "jq",
+      "command_args": [
+        "-r",
+        "map(.[] | select(type == \"string\")) | join(\"|\")"
+      ],
+      "input_stream_from": {
+        "type": "variable",
+        "name": "KEYWORDS_JSON"
+      }
+    },
+    {
+      "type": "command_execution",
+      "program": "rg",
+      "arguments": [
+        "--files-with-matches",
+        "-0",
+        "-t",
+        "rust",
+        {"source": "variable", "name": "SEARCH_PATTERN"}
+      ],
+      "output_destination": "stdout"
+    }
+  ]
+}
