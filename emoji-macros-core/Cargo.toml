@@ -2,13 +2,11 @@
 name = "emoji-macros-core"
 version = "0.1.0"
 edition = "2021"
-description = "Core logic for declarative emoji-based procedural macros."
 
 [lib]
-# This is NOT a proc-macro crate itself, but a regular library
-# that contains helper functions and a declarative macro for building proc-macros.
+proc-macro = true
 
 [dependencies]
-syn = { workspace = true, features = ["full", "extra-traits"] }
-quote = { workspace = true }
 proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true, features = ["full", "extra-traits"] }

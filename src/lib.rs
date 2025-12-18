@@ -3,12 +3,7 @@
 //! This crate provides the core data structures and logic for the
 //! Lean4-inspired metaprogramming and semantic patching system.
 
-pub mod expr;
-pub mod pure_program;
-
-// Re-export the main types for easier access.
-pub use expr::Expr;
-pub use pure_program::PureProgram;
+pub use introspector_core::{Expr, PureProgram};
 
 #[cfg(test)]
 mod tests {

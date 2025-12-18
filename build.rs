@@ -1,5 +1,4 @@
 use patch_build_rs_macros::mkbuildrs;
-use mkslop_macros::mkslop;
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");

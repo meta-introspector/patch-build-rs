@@ -1,0 +1,13 @@
+[package]
+name = "introspector_core"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "introspector_core"
+path = "src/lib.rs"
+
+[dependencies]
+# Dependencies for Expr and PureProgram if any, e.g., serde for derive
+serde = { workspace = true, features = ["derive"] }
+quote = { workspace = true }

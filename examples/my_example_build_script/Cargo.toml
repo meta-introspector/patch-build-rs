@@ -1,0 +1,13 @@
+[package]
+name = "my-example-build-script"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[[bin]]
+name = "my-example-build-script"
+path = "src/main.rs"
+
+[build-dependencies]
+patch-build-rs-macros = { workspace = true }
+mkslop-macros = { workspace = true }
