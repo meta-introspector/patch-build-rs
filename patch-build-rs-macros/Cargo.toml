@@ -25,5 +25,5 @@ default = []
 test_build = [] # For testing build.rs generation
 
 [dev-dependencies]
-tempfile = "0.3"
+tempfile = "3.10"
 

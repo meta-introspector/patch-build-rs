@@ -26,6 +26,7 @@ sha2 = "0.10"
 once_cell = "1.19"
 directories = "5.0"
 walkdir = "2.5"
+shebling_macros = { path = "shebling_macros", proc-macro = true }
 
 [package]
 name = "patch-build-rs"

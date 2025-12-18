@@ -328,25 +328,35 @@ pub fn llm(input: TokenStream) -> TokenStream {
 /// Resolves to a `results!` macro after conceptual execution.
 ///
 /// Usage: `toolcall! { "tool_name", "arg1: val1, arg2: val2" }`
+struct ToolCallArgs {
+    tool_name: LitStr,
+    _comma: Token![,],
+    args: LitStr,
+}
+
+impl Parse for ToolCallArgs {
+    fn parse(input: ParseStream) -> SynResult<Self> {
+        let tool_name = input.parse()?;
+        let _comma = input.parse()?;
+        let args = input.parse()?;
+        Ok(ToolCallArgs { tool_name, _comma, args })
+    }
+}
+
 #[proc_macro]
 pub fn toolcall(input: TokenStream) -> TokenStream {
-    // This macro would need more sophisticated parsing for tool_name and args.
-    // For simplicity, we expect a tool name (LitStr) followed by a comma and arguments (LitStr).
-    let mut parser = syn::parse::ParseBuffer::new(input);
-    let tool_name_literal: LitStr = parser.parse().expect("Expected tool name literal");
-    parser.parse::<Token![,]>().expect("Expected comma after tool name");
-    let args_literal: LitStr = parser.parse().expect("Expected arguments literal");
+    let args = parse_macro_input!(input as ToolCallArgs);
 
-    let tool_name = tool_name_literal.value();
-    let args = args_literal.value();
-    let span = tool_name_literal.span();
+    let tool_name = args.tool_name.value();
+    let args_value = args.args.value();
+    let span = args.tool_name.span();
 
     // Conceptually, the tool is executed here.
     // The result is then passed to the `results!` macro.
-    let simulated_tool_output = format!("Tool '{}' executed with args: {}", tool_name, args);
+    let simulated_tool_output = format!("Tool '{}' executed with args: {}", tool_name, args_value);
 
     quote_spanned! {span =>
-        eprintln!("\n🛠️ TOOLCALL! Executing tool: `{}` with args: `{}`. Awaiting results...\n", #tool_name, #args);
+        eprintln!("\n🛠️ TOOLCALL! Executing tool: `{}` with args: `{}`. Awaiting results...\n", #tool_name, #args_value);
         solfun_macros::results! { #simulated_tool_output }
     }
     .into()
