@@ -1,0 +1,55 @@
+[package]
+name = "emoji-macros"
+version = "0.1.0"
+edition = "2021"
+description = "Consolidated emoji-based procedural macros for declarative code transformation."
+
+[lib]
+proc-macro = true
+
+[dependencies]
+emoji-macros-core = { path = "../emoji-macros-core" }
+syn = { workspace = true, features = ["full", "extra-traits"] }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+
+[features]
+default = [
+    "arrows", "ballot", "bandage", "broom", "bullseye", "chart", "dna",
+    "fork_knife", "forty_two", "gem", "growth", "halo", "herb", "idea",
+    "lock", "magnifying_glass", "map", "moai", "money", "notes", "octopus",
+    "owl", "package", "reset", "robot", "rocket", "scroll", "sparkle",
+    "temple", "truck", "up_arrow", "web"
+]
+arrows = []
+ballot = []
+bandage = []
+broom = []
+bullseye = []
+chart = []
+dna = []
+fork_knife = []
+forty_two = []
+gem = []
+growth = []
+halo = []
+herb = []
+idea = []
+lock = []
+magnifying_glass = []
+map = []
+moai = []
+money = []
+notes = []
+octopus = []
+owl = []
+package = []
+reset = []
+robot = []
+rocket = []
+scroll = []
+sparkle = []
+temple = []
+truck = []
+up_arrow = []
+web = []
