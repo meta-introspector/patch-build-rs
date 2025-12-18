@@ -421,3 +421,45 @@ pub fn service_finder(input: TokenStream) -> TokenStream {
     }
     .into()
 }
+
+// --- biosemiotic! macro ---
+/// Interprets emoji sequences as conceptual operations.
+///
+/// Usage: `biosemiotic! { 🔄📜🔍💬🧠 }`
+#[proc_macro]
+pub fn biosemiotic(input: TokenStream) -> TokenStream {
+    let input_str = input.to_string(); // Get the raw token stream as a string
+
+    let output = match input_str.trim() {
+        "🔄 📜 🔍 💬 🧠" | "🔄📜🔍💬🧠" => {
+            quote! {
+                eprintln!("\n🔄📜🔍💬🧠: Initiating Self-reflection & Introspection! (Conceptually: Analyzing own structure, revealing ontological commitments, decoding meanings)\n");
+                // In a real scenario, this would trigger introspection mechanisms, e.g., via GrastDb or mkmacroslop
+            }
+        },
+        "🔀 💡 💭 🔑" | "🔀💡💭🔑" => {
+            quote! {
+                eprintln!("\n🔀💡💭🔑: Fostering Emergent Ideas & New Meanings! (Conceptually: Combining elements in meme space, generating novel concepts)\n");
+                // This could conceptually lead to new `llm!` calls or `codegen!`
+            }
+        },
+        "🤖 🌐 📊 🔗" | "🤖🌐📊🔗" => {
+            quote! {
+                eprintln!("\n🤖🌐📊🔗: Engaging Autonomous AI Agents & Decentralized Consensus! (Conceptually: Agents reaching agreement, Paxos consensus, semantic interpretation)\n");
+                // This could conceptually involve `mcp!` for context or `service_finder!` for agents
+            }
+        },
+        "🧩 🔗 🌱" | "🧩🔗🌱" => {
+            quote! {
+                eprintln!("\n🧩🔗🌱: Driving Evolutionary Growth & Self-Replication! (Conceptually: Bootstrapping new agents, memes, protocols, creating new semantic states)\n");
+                // This could conceptually trigger `codegen!` for new protocols or `make_everything_a_macro!`
+            }
+        },
+        _ => {
+            quote! {
+                compile_error!("Unknown biosemiotic emoji sequence: {}", #input_str);
+            }
+        }
+    };
+    output.into()
+}

@@ -4,8 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rocket-macro = { path = "../../emoji-macros/rocket-macro" }
-scroll-macro = { path = "../../emoji-macros/scroll-macro" }
+emoji-macros = { path = "../../emoji-macros", features = ["rocket", "scroll"] }
 
 [build-dependencies]
 serde = { version = "1.0", features = ["derive"] }
