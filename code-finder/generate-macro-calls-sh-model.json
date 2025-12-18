@@ -1,0 +1,33 @@
+{
+  "script_name": "generate-macro-calls.sh",
+  "description": "Reads ripgrep JSON output from stdin and transforms each match into a Rust macro call.",
+  "operations": [
+    {
+      "type": "command_execution",
+      "program": "echo",
+      "arguments": [
+        {"literal": "// Generated Rust macro calls from ripgrep results"}
+      ],
+      "output_destination": "stdout"
+    },
+    {
+      "type": "command_execution",
+      "program": "echo",
+      "arguments": [
+        {"literal": ""}
+      ],
+      "output_destination": "stdout"
+    },
+    {
+      "type": "generate_rust_macros",
+      "input_source": "stdin_json_rg_output",
+      "macro_name": "process_match",
+      "mapping_rules": [
+        {"field": "file", "json_path": ".data.path.text"},
+        {"field": "line", "json_path": ".data.line_number"},
+        {"field": "column", "json_path": ".data.submatches[0].start"},
+        {"field": "text", "json_path": ".data.lines.text", "escape_type": "rust_string"}
+      ]
+    }
+  ]
+}
