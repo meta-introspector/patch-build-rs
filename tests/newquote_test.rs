@@ -1,4 +1,4 @@
-use patch_build_rs_macros::newquote;
+use patch_build_rs_macros::__newquote_implementation_default;
 use introspector_core::Expr;
 use std::collections::BTreeSet;
 use std::hash::{DefaultHasher, Hash, Hasher};
@@ -7,7 +7,7 @@ extern crate quote; // Required for quote::quote!
 
 #[test]
 fn test_newquote_simple_function() {
-    let (expr_result, returned_str) = newquote! {
+    let (expr_result, returned_str) = __newquote_implementation_default! {
         pub fn calculate_sum(a: i32, b: i32) -> i32 {
             a + b
         }
@@ -28,13 +28,13 @@ fn test_newquote_simple_function() {
         // Optionally, print the returned_str to inspect its content
         // eprintln!("Returned String: {}", returned_str);
     } else {
-        panic!("newquote! did not produce an Expr::PureAttractor variant.");
+        panic!("__newquote_implementation_default! did not produce an Expr::PureAttractor variant.");
     }
 }
 
 #[test]
 fn test_newquote_different_input() {
-    let (expr_result, returned_str) = newquote! {
+    let (expr_result, returned_str) = __newquote_implementation_default! {
         struct MyStruct {
             field: String,
         }
@@ -51,6 +51,6 @@ fn test_newquote_different_input() {
         assert_eq!(pure_program.set, expected_set);
         assert!(pure_program.name.starts_with("reflected_program_"));
     } else {
-        panic!("newquote! did not produce an Expr::PureAttractor variant.");
+        panic!("__newquote_implementation_default! did not produce an Expr::PureAttractor variant.");
     }
 }

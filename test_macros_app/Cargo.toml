@@ -1,0 +1,10 @@
+[package]
+name = "test_macros_app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+patch-build-rs-macros = { path = "../patch-build-rs-macros" }
+solfun_macros = { path = "../solfun_macros" }
+code_finder_macros = { path = "../code-finder/code_finder_macros" } # Corrected name
+emoji-macros = { path = "../emoji-macros" }
