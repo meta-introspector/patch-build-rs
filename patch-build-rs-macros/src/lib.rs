@@ -18,6 +18,27 @@ mod lean4_proof;
 mod lean4_json;
 mod lean4_mirror;
 mod quine_relay;
+mod emoji_poetry;
+
+#[proc_macro]
+pub fn emoji_poem(input: TokenStream) -> TokenStream {
+    emoji_poetry::emoji_poem_impl(input)
+}
+
+#[proc_macro]
+pub fn math_to_emoji(input: TokenStream) -> TokenStream {
+    emoji_poetry::math_to_emoji_impl(input)
+}
+
+#[proc_macro]
+pub fn emoji_to_math(input: TokenStream) -> TokenStream {
+    emoji_poetry::emoji_to_math_impl(input)
+}
+
+#[proc_macro]
+pub fn poetry_cycle(input: TokenStream) -> TokenStream {
+    emoji_poetry::poetry_cycle_impl(input)
+}
 
 #[proc_macro]
 pub fn language_quine(input: TokenStream) -> TokenStream {
