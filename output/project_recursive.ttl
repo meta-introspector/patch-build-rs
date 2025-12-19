@@ -1,0 +1,37 @@
+node_0 :type :File .
+node_1 :type :UseDecl .
+node_1 :path "use grast_core :: GrastDb ; . tree" .
+node_0 :item_0 node_1 .
+node_2 :type :UseDecl .
+node_2 :path "use std :: fs ; . tree" .
+node_0 :item_1 node_2 .
+node_3 :type :UseDecl .
+node_3 :path "use std :: path :: { Path , PathBuf } ; . tree" .
+node_0 :item_2 node_3 .
+node_4 :type :UseDecl .
+node_4 :path "use anyhow :: { Result , Context } ; . tree" .
+node_0 :item_3 node_4 .
+node_5 :type :UseDecl .
+node_5 :path "use syn :: parse_file ; . tree" .
+node_0 :item_4 node_5 .
+node_6 :type :UseDecl .
+node_6 :path "use walkdir :: WalkDir ; . tree" .
+node_0 :item_5 node_6 .
+node_7 :type :FunctionDecl .
+node_7 :name "process_file_and_print_turtle" .
+node_7 :visibility Visibility::Inherited .
+node_8 :type :Parameter .
+node_7 :param_0 node_8 .
+node_8 :name "file_path" .
+node_8 :type_name "file_path : & Path . ty" .
+node_9 :type :ReturnType .
+node_7 :return_type node_9 .
+node_9 :type_name "Result < () >" .
+node_0 :item_6 node_7 .
+node_10 :type :FunctionDecl .
+node_10 :name "main" .
+node_10 :visibility Visibility::Inherited .
+node_11 :type :ReturnType .
+node_10 :return_type node_11 .
+node_11 :type_name "Result < () >" .
+node_0 :item_7 node_10 .
