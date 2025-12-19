@@ -1,0 +1,12 @@
+# Duplicate Code Analysis Directory
+
+Fine-grained redundancy detection via Pure Abstraction:
+
+- unified_vfs_structure.md - Codebase lifted to unified meta-model
+- semantic_hash_analysis.txt - Structural fingerprinting for duplicates
+- grast_structural_search.ttl - AST patterns in RDF Turtle format
+- llm_redundancy_analysis.md - AI-driven redundancy insights
+- redundancy_statistics.txt - Comprehensive refactor recommendations
+
+Architecture: Tower of Reflection → VFS → Semantic Hashing → GRAST → LLM Analysis
+Method: Digital library approach with semantic understanding

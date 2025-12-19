@@ -23,6 +23,32 @@ mod rust_eigenmatrix;
 mod real_rustc_analysis;
 mod rustc_tracer;
 mod compiler_inventory;
+mod duplicate_analysis;
+
+#[proc_macro]
+pub fn unified_codebase(input: TokenStream) -> TokenStream {
+    duplicate_analysis::unified_codebase_impl(input)
+}
+
+#[proc_macro]
+pub fn semantic_hash(input: TokenStream) -> TokenStream {
+    duplicate_analysis::semantic_hash_impl(input)
+}
+
+#[proc_macro]
+pub fn grast_structural(input: TokenStream) -> TokenStream {
+    duplicate_analysis::grast_structural_impl(input)
+}
+
+#[proc_macro]
+pub fn llm_redundancy(input: TokenStream) -> TokenStream {
+    duplicate_analysis::llm_redundancy_impl(input)
+}
+
+#[proc_macro]
+pub fn redundancy_stats(input: TokenStream) -> TokenStream {
+    duplicate_analysis::redundancy_stats_impl(input)
+}
 
 #[proc_macro]
 pub fn compiler_inventory(input: TokenStream) -> TokenStream {
