@@ -1,6 +1,11 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, LitStr};
+use syn::{parse_macro_input, LitStr, Item}; // Added Item
+use introspector_core::{Expr, EXPR_CACHE}; // Import Expr and EXPR_CACHE
+use std::hash::{Hash, Hasher}; // For hashing
+use std::collections::hash_map::DefaultHasher; // For hashing
+use serde_json; // For serializing Expr for hashing
+
 
 pub fn compiler_inventory_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
@@ -110,49 +115,50 @@ pub fn compiler_inventory_impl(input: TokenStream) -> TokenStream {
 }
 
 pub fn pure_reflect_impl(input: TokenStream) -> TokenStream {
-    let input_str = parse_macro_input!(input as LitStr);
-    let source_item = input_str.value();
-    
-    quote! {
-        {
-            println!("cargo:warning=🔮 Pure reflection: {}", #source_item);
-            
-            // Tower of Reflection: Imperative → Functional → Total
-            let reflection = format!(r###"
-🔮 PURE REFLECTION: {}
+    let input_cloned = input.clone(); // Clone input before parsing
+    let item = parse_macro_input!(input_cloned as Item);
 
-Level 1: Imperative Code
-```rust
-{}
-```
-
-Level 2: Functional Representation
-```
-(define {} 
-  (lambda (args) 
-    (match args
-      [(pattern) (body)])))
-```
-
-Level 3: Total Reflection (Lean4 Expr)
-```lean
-def {} : Expr := 
-  Expr.lam `args (Expr.sort Level.zero)
-    (Expr.app (Expr.const `match []) 
-      (Expr.const `args []))
-```
-
-🧮 Reflection Properties:
-- Computational: ✅ (can be evaluated)
-- Inspectable: ✅ (structure accessible)
-- Transformable: ✅ (can be modified)
-- Provable: ✅ (properties verifiable)
-
-🎯 Reflection complete: Code lifted to mathematical object
-            "###, #source_item, #source_item, #source_item, #source_item);
-            
-            reflection
+    let new_expr = match item {
+        Item::Fn(item_fn) => Expr::from_fn(item_fn),
+        Item::Struct(item_struct) => Expr::from_struct(item_struct),
+        Item::Enum(item_enum) => Expr::from_enum(item_enum),
+        Item::Trait(item_trait) => Expr::from_trait(item_trait),
+        Item::Impl(item_impl) => Expr::from_impl(item_impl),
+        Item::Use(item_use) => Expr::from_use(item_use),
+        Item::Mod(item_mod) => Expr::from_module(item_mod),
+        Item::Static(item_static) => Expr::from_static(item_static),
+        Item::Const(item_const) => Expr::from_const_item(item_const),
+        _ => {
+            return quote! { compile_error!("pure_reflect macro only supports functions, structs, enums, traits, impls, uses, modules, statics, and consts as input.") }
+                .into();
         }
+    };
+    
+    // Calculate hash based on the new_expr (for content-addressability)
+    let expr_str_for_hash = serde_json::to_string(&new_expr).expect("Failed to serialize Expr for hashing");
+    let mut hasher = DefaultHasher::new();
+    expr_str_for_hash.hash(&mut hasher);
+    let item_hash = hasher.finish();
+
+    let expr_to_return: Expr;
+
+    if let Some(cached_expr_tuple) = EXPR_CACHE.lock().unwrap().get(&item_hash) {
+        expr_to_return = cached_expr_tuple.0.clone();
+    } else {
+        expr_to_return = new_expr;
+    }
+
+    // Call hash_and_register_recursive for the main expression
+    // This handles cache insertion, count update, and lattice building.
+    // The println for 10 instances is inside hash_and_register_recursive.
+    expr_to_return.hash_and_register_recursive(None);
+
+    // Expand to both the original input tokens.
+    // The Expr representation itself is not emitted here, only registered globally.
+    // This ensures the original code is still compiled.
+    let original_input_pm2 = proc_macro2::TokenStream::from(input);
+    quote! {
+        #original_input_pm2
     }.into()
 }
 

@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
-use quote::quote;
 use syn::{parse_macro_input, LitStr};
+use quote::quote;
 
 mod decl_attr;
 mod rust_nix;
@@ -31,6 +31,7 @@ mod macro_lattice;
 mod repo_analysis;
 mod macro_generator;
 mod template_checker;
+mod ollama_macros;
 
 #[proc_macro]
 pub fn checktemplate(input: TokenStream) -> TokenStream {
@@ -682,3 +683,9 @@ pub fn value(input: TokenStream) -> TokenStream {
 pub fn decl(attr: TokenStream, item: TokenStream) -> TokenStream {
     decl_attr::decl_attr_impl(attr, item)
 }
+
+#[proc_macro]
+pub fn ollama(input: TokenStream) -> TokenStream {
+    ollama_macros::ollama_impl(input)
+}
+
