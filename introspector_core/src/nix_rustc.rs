@@ -169,10 +169,9 @@ pub fn analyze_rustc_source(source_dir: &Path) -> Result<RustcSourceStats, Strin
         .output()
         .map_err(|e| format!("Failed to find files: {}", e))?;
     
-    let files: Vec<&str> = String::from_utf8_lossy(&find_output.stdout)
+    let stdout_str = String::from_utf8_lossy(&find_output.stdout).into_owned(); // Create an owned String
+    let files: Vec<&str> = stdout_str
         .lines()
-        .collect::<Vec<_>>()
-        .into_iter()
         .filter(|s| !s.is_empty())
         .collect();
     
@@ -203,7 +202,7 @@ pub fn analyze_rustc_source(source_dir: &Path) -> Result<RustcSourceStats, Strin
     
     // Count lines and declarations in a sample
     let sample_files: Vec<_> = files.iter().take(100).collect();
-    for file in sample_files {
+    for file in &sample_files {
         if let Ok(content) = fs::read_to_string(file) {
             stats.total_lines += content.lines().count();
             stats.declarations += content.matches("pub fn ").count();

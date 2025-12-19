@@ -2,7 +2,7 @@ use proc_macro::TokenStream;
 use quote::{quote, ToTokens};
 use syn::{
     parse_macro_input, parse_quote, ItemFn, ItemStruct, ItemEnum, ItemTrait,
-    ItemConst, ItemType, Attribute, Meta, MetaList, NestedMeta, Lit, Ident,
+    ItemConst, ItemType, Attribute, Meta, MetaList, Lit, Ident,
 };
 
 pub fn decl_attr_impl(attr: TokenStream, item: TokenStream) -> TokenStream {

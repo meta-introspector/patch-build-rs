@@ -14,8 +14,13 @@ anyhow = { workspace = true }
 toml = { workspace = true }
 toml_edit = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
-serde_json = { workspace = true }
+serde_json = { workspace = true } # Already present
 walkdir = { workspace = true }
 once_cell = { workspace = true }
 introspector_core = { workspace = true }
-# Add any other specific dependencies as needed from workspace.dependencies
+reqwest = { workspace = true, optional = true, features = ["blocking", "json"] }
+semver = { workspace = true, optional = true } # Add semver
+
+[features]
+ollama_reqwest = ["reqwest"]
+ollama_semver = ["semver"] # Add feature for semver

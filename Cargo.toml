@@ -34,6 +34,8 @@ patch-build-rs-macros = { path = "patch-build-rs-macros" }
 mkslop-macros = { path = "mkslop-macros" }
 nix2proc-macros = { path = "nix2proc-macros" }
 introspector_core = { path = "introspector_core" }
+reqwest = "0.11" # Add reqwest to workspace dependencies
+semver = "1.0" # Add semver to workspace dependencies
 
 [package]
 name = "patch-build-rs"
