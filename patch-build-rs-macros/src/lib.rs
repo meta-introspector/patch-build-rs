@@ -25,6 +25,22 @@ mod rustc_tracer;
 mod compiler_inventory;
 mod duplicate_analysis;
 mod real_data_analysis;
+mod mkbuildrs;
+
+#[proc_macro]
+pub fn mkbuildrs(input: TokenStream) -> TokenStream {
+    mkbuildrs::mkbuildrs_impl(input)
+}
+
+#[proc_macro]
+pub fn nix_rust_version(input: TokenStream) -> TokenStream {
+    mkbuildrs::nix_rust_version_impl(input)
+}
+
+#[proc_macro]
+pub fn rust_cache(input: TokenStream) -> TokenStream {
+    mkbuildrs::rust_cache_impl(input)
+}
 
 #[proc_macro]
 pub fn real_rustc_analysis(input: TokenStream) -> TokenStream {
@@ -591,14 +607,5 @@ pub fn value(input: TokenStream) -> TokenStream {
     
     quote! {
         println!("💰 Bounty: {}", #amount);
-    }.into()
-}
-
-#[proc_macro]
-pub fn mkbuildrs(input: TokenStream) -> TokenStream {
-    let input_str = input.to_string();
-    
-    quote! {
-        eprintln!("🏗️ MKBUILDRS: {}", #input_str);
     }.into()
 }
