@@ -149,7 +149,7 @@ impl<F: Field> RustcMorphismCircuit<F> {{
 
 pub fn stark_proof_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
-    let execution_trace = input_str.value();
+    let _execution_trace = input_str.value();
     
     quote! {
         {

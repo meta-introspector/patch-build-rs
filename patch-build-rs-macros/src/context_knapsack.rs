@@ -53,7 +53,7 @@ pub fn backpack_fill_impl(input: TokenStream) -> TokenStream {
 
 pub fn context_optimize_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
-    let context_items = input_str.value();
+    let _context_items = input_str.value();
     
     quote! {
         {
