@@ -22,6 +22,27 @@ mod emoji_poetry;
 mod rust_eigenmatrix;
 mod real_rustc_analysis;
 mod rustc_tracer;
+mod compiler_inventory;
+
+#[proc_macro]
+pub fn compiler_inventory(input: TokenStream) -> TokenStream {
+    compiler_inventory::compiler_inventory_impl(input)
+}
+
+#[proc_macro]
+pub fn pure_reflect(input: TokenStream) -> TokenStream {
+    compiler_inventory::pure_reflect_impl(input)
+}
+
+#[proc_macro]
+pub fn grast_extract(input: TokenStream) -> TokenStream {
+    compiler_inventory::grast_extract_impl(input)
+}
+
+#[proc_macro]
+pub fn usage_analysis(input: TokenStream) -> TokenStream {
+    compiler_inventory::usage_analysis_impl(input)
+}
 
 #[proc_macro]
 pub fn trace_rustc(input: TokenStream) -> TokenStream {
