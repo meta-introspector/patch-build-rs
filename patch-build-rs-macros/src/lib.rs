@@ -26,6 +26,22 @@ mod compiler_inventory;
 mod duplicate_analysis;
 mod real_data_analysis;
 mod mkbuildrs;
+mod macro_lattice;
+
+#[proc_macro]
+pub fn macro_lattice(input: TokenStream) -> TokenStream {
+    macro_lattice::macro_lattice_impl(input)
+}
+
+#[proc_macro]
+pub fn lattice_dependencies(input: TokenStream) -> TokenStream {
+    macro_lattice::lattice_dependencies_impl(input)
+}
+
+#[proc_macro]
+pub fn lattice_path(input: TokenStream) -> TokenStream {
+    macro_lattice::lattice_path_impl(input)
+}
 
 #[proc_macro]
 pub fn mkbuildrs(input: TokenStream) -> TokenStream {

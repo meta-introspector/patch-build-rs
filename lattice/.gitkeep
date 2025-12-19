@@ -1,0 +1,11 @@
+# Macro Lattice Directory
+
+Mathematical ordering and analysis of the complete macro universe:
+
+- canonical_structure.md - Complete 15-level lattice structure
+- dependency_analyses.md - Dependency analysis for key macros
+- learning_path.md - Zero to hero progression guide
+- visual_lattice.dot - GraphViz visualization
+- explorer.html - Interactive lattice explorer
+
+The lattice provides a mathematical framework for understanding macro dependencies and learning progression from foundation to mastery.
