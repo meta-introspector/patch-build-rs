@@ -24,6 +24,22 @@ mod real_rustc_analysis;
 mod rustc_tracer;
 mod compiler_inventory;
 mod duplicate_analysis;
+mod real_data_analysis;
+
+#[proc_macro]
+pub fn real_rustc_analysis(input: TokenStream) -> TokenStream {
+    real_data_analysis::real_rustc_analysis_impl(input)
+}
+
+#[proc_macro]
+pub fn real_duplicate_detection(input: TokenStream) -> TokenStream {
+    real_data_analysis::real_duplicate_detection_impl(input)
+}
+
+#[proc_macro]
+pub fn real_eigenmatrix(input: TokenStream) -> TokenStream {
+    real_data_analysis::real_eigenmatrix_impl(input)
+}
 
 #[proc_macro]
 pub fn unified_codebase(input: TokenStream) -> TokenStream {

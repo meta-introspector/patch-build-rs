@@ -1,0 +1,11 @@
+# Real Data Reports Directory
+
+NO MOCK DATA - Only verifiable analysis from real rustc source:
+
+- rustc_source_analysis.txt - Real file counts and statistics
+- duplicate_detection.txt - Actual duplicate functions found
+- eigenmatrix_calculation.txt - Real eigenvalues from keyword frequencies
+- setup_driver.sh - Script to download and setup real rustc source
+
+All numbers are derived from actual source code analysis.
+No hardcoded statistics or fake data.
