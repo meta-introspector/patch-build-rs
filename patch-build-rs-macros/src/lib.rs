@@ -16,6 +16,27 @@ mod context_knapsack;
 mod zk_proof;
 mod lean4_proof;
 mod lean4_json;
+mod lean4_mirror;
+
+#[proc_macro]
+pub fn lean4_to_rust(input: TokenStream) -> TokenStream {
+    lean4_mirror::lean4_to_rust_impl(input)
+}
+
+#[proc_macro]
+pub fn rust_to_lean4(input: TokenStream) -> TokenStream {
+    lean4_mirror::rust_to_lean4_impl(input)
+}
+
+#[proc_macro]
+pub fn proof_simulate(input: TokenStream) -> TokenStream {
+    lean4_mirror::proof_simulate_impl(input)
+}
+
+#[proc_macro]
+pub fn lean4_macro_bridge(input: TokenStream) -> TokenStream {
+    lean4_mirror::lean4_macro_bridge_impl(input)
+}
 
 #[proc_macro]
 pub fn lean4_expr_json(input: TokenStream) -> TokenStream {

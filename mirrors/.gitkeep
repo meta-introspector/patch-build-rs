@@ -1,0 +1,9 @@
+# Lean4 ↔ Rust Mirror Directory
+
+Generated bidirectional mirror components:
+
+- lean4_to_rust_macros.rs - Lean4 syntax → Rust macros
+- rust_to_lean4_syntax.lean - Rust code → Lean4 syntax
+- proof_simulator.rs - Lean4 proof simulation in Rust
+- macro_bridge.rs - Bidirectional translation bridge
+- mirror_test.rs - Complete mirror system test
