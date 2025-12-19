@@ -2,6 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module contains fabricated statistics and fake analysis
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-001: Fabricated VFS statistics (47 functions, 234 functions, 1247 items)
+// PHO-002: Fabricated reduction percentages (55.1%, 18.9%, etc)
+// FKD-001: Hardcoded hash values (a7f3b2c1, d8e9f4a6, f2b8c4d6)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn unified_codebase_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let target_path = input_str.value();
@@ -10,8 +18,10 @@ pub fn unified_codebase_impl(input: TokenStream) -> TokenStream {
         {
             println!("cargo:warning=🔄 Unified codebase ingestion: {}", #target_path);
             
+            // AUDIT: phony!("All VFS structure data below is illustrative placeholder, not actual file system analysis")
             // Phase 1: Recursive Lifting via Tower of Reflection
             let vfs_structure = format!(r###"
+⚠️ [FAKEDATA] The following is illustrative output, not real analysis:
 🔄 UNIFIED CODEBASE INGESTION: {}
 
 📁 Functional VFS Mapping: /proc/grast/rust_code/
@@ -33,12 +43,12 @@ pub fn unified_codebase_impl(input: TokenStream) -> TokenStream {
     ├── span_tracking/ (semantic_hash: d8e2f4a6)
     └── symbol_resolution/ (semantic_hash: b5c9d1e7)
 
-🧮 Reflection Statistics:
-- Total items lifted: 1,247
-- Functions reflected: 635
-- Structs reflected: 213
-- Subexpressions: 399
-- Semantic hashes generated: 1,247
+🧮 Reflection Statistics: [PHONY - illustrative numbers only]
+- Total items lifted: 1,247 [FAKEDATA]
+- Functions reflected: 635 [FAKEDATA]
+- Structs reflected: 213 [FAKEDATA]
+- Subexpressions: 399 [FAKEDATA]
+- Semantic hashes generated: 1,247 [FAKEDATA]
 
 🎯 Tower of Reflection Complete: Code → Numeric → Lean4 Expr
             "###, #target_path);
@@ -48,6 +58,7 @@ pub fn unified_codebase_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+// AUDIT: fakedata!("semantic_hash_impl uses hardcoded hash values, not computed hashes")
 pub fn semantic_hash_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let code_item = input_str.value();
@@ -56,15 +67,16 @@ pub fn semantic_hash_impl(input: TokenStream) -> TokenStream {
         {
             println!("cargo:warning=🔐 Semantic hashing: {}", #code_item.len());
             
+            // AUDIT: issue!("These are hardcoded example hashes, not actually computed from input")
             // Generate semantic hash for code structure
             let hash_analysis = format!(r###"
-🔐 SEMANTIC HASH ANALYSIS
+🔐 SEMANTIC HASH ANALYSIS [PHONY - static example output]
 
 Code Item: {}
-Structure Hash: a7f3b2c1d8e9f4a6
-Semantic Hash: f2b8c4d6e1a9f7b3
+Structure Hash: a7f3b2c1d8e9f4a6 [FAKEDATA - hardcoded]
+Semantic Hash: f2b8c4d6e1a9f7b3 [FAKEDATA - hardcoded]
 
-🧮 Hash Components:
+🧮 Hash Components: [FAKEDATA - all values are static examples]
 - AST Structure: 0xa7f3b2c1 (function signature + body structure)
 - Type Signature: 0xd8e9f4a6 (parameter and return types)
 - Control Flow: 0xf2b8c4d6 (if/match/loop patterns)

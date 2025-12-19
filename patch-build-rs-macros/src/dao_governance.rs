@@ -2,6 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module generates illustrative DAO governance code
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-005: Simulated DAO voting (not actual on-chain governance)
+// FKD-004: Hardcoded governance counts (1000, 500, 100)
+// CON-001: Conceptual Paxos (single-node simulation, not distributed)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn dao_vote_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let proposal = input_str.value();

@@ -1,3 +1,12 @@
+use crate::Expr;
+use crate::PureProgram;
+use std::hash::{DefaultHasher, Hash, Hasher};
+use std::collections::BTreeSet;
+use proc_macro2::TokenStream; // Explicitly import TokenStream
+
+pub trait NewQuoteTrait {
+    fn to_expr(&self) -> Expr;
+}
 
 impl NewQuoteTrait for proc_macro2::TokenStream {
     fn to_expr(&self) -> Expr {

@@ -2,6 +2,13 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module generates illustrative trading code
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-007: Template trading system (not a real trading system)
+// FKD-006: Hardcoded sample prices (145.32, 43250.67, etc.)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn quant_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let strategy = input_str.value();
@@ -146,11 +153,12 @@ pub fn load_historical_impl(input: TokenStream) -> TokenStream {
             
             println!("cargo:warning=📊 Loading historical data from: {}", #data_source);
             
+            // AUDIT: fakedata!("All prices below are hardcoded sample data, not real market data")
             // Simulate loading historical market data
             let historical_data = match #data_source {
-                "solana" => "145.32,147.89,143.21,149.67,152.34,148.91,151.23",
-                "bitcoin" => "43250.67,44123.89,42987.34,45234.12,46789.45",
-                _ => "100.0,101.5,99.8,102.3,103.7,101.9,104.2"
+                "solana" => "145.32,147.89,143.21,149.67,152.34,148.91,151.23", // [FAKEDATA]
+                "bitcoin" => "43250.67,44123.89,42987.34,45234.12,46789.45", // [FAKEDATA]
+                _ => "100.0,101.5,99.8,102.3,103.7,101.9,104.2" // [FAKEDATA]
             };
             
             // Transform to Rust macro

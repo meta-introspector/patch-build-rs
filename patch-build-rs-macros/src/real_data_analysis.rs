@@ -2,6 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module attempts real analysis but has limitations
+// ═══════════════════════════════════════════════════════════════════════════════
+// ISS-001: Misleading eigenvalue terminology (actually normalized frequency)
+// ISS-002: Naive pattern counting (string matching may over/undercount)
+// TDO-001: Replace string matching with AST parsing
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn real_rustc_analysis_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let source_path = input_str.value();

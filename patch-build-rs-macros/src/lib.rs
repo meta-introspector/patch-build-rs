@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+mod decl_attr;
 mod rust_nix;
 mod rustc_ring;
 mod lmfdb_morph;
@@ -662,4 +663,22 @@ pub fn value(input: TokenStream) -> TokenStream {
     quote! {
         println!("💰 Bounty: {}", #amount);
     }.into()
+}
+
+/// Attribute macro for wrapping declarations with metadata
+/// 
+/// Usage:
+/// ```rust
+/// #[decl(fn, name = "my_function", vis = "pub", hash = "abc123")]
+/// pub fn my_function() {}
+/// 
+/// #[decl(struct)]
+/// pub struct MyStruct { ... }
+/// ```
+/// 
+/// The macro automatically extracts metadata and registers the declaration
+/// in a compile-time registry for introspection.
+#[proc_macro_attribute]
+pub fn decl(attr: TokenStream, item: TokenStream) -> TokenStream {
+    decl_attr::decl_attr_impl(attr, item)
 }

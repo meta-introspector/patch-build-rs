@@ -1,9 +1,10 @@
 use std::collections::BTreeSet;
+use serde::{Deserialize, Serialize};
 
 /// Represents a Rust program or a patch as a "numeric attractor".
 /// The `set` contains the unique numerical identifiers of the program's components.
 /// The `name` is a human-readable identifier.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct PureProgram {
     pub set: BTreeSet<u64>,
     pub name: String,

@@ -2,6 +2,15 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module generates illustrative ZK proof code
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-004: Template ZK proofs (PLONK/STARK/SNARK are structural templates)
+// FKD-008: Illustrative witness values (not cryptographically sound)
+// UNV-001: Fake morphism verification (just checks sum equality)
+// UNV-002: Metaphorical Monster group reference (196883)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn zk_witness_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let graph_data = input_str.value();
@@ -29,9 +38,10 @@ pub fn zk_witness_impl(input: TokenStream) -> TokenStream {
                 #graph_data.len() as u64, // Graph size
             ];
             
+            // AUDIT: phony!("This generates template struct, not actual ZK witness")
             let zk_witness = format!(
                 r#"
-// Auto-generated ZK Witness
+// [PHONY] Auto-generated ZK Witness - NOT a real cryptographic witness
 pub struct GraphWitness {{
     pub private_witness: Vec<u64>,
     pub public_inputs: Vec<u64>,
@@ -48,7 +58,8 @@ impl GraphWitness {{
     }}
     
     pub fn verify_morphism(&self) -> bool {{
-        // Verify Rust → Monster → 1 morphism
+        // [PHONY] This is NOT a real morphism verification - just checks sum equality
+        // unverified!("'Rust → Monster → 1 morphism' is conceptual, not mathematically verified")
         let witness_sum = self.private_witness.iter().sum::<u64>();
         let expected_commitment = self.public_inputs[1];
         

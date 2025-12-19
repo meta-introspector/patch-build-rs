@@ -7,11 +7,17 @@ edition = "2021"
 name = "introspector_core"
 path = "src/lib.rs"
 
+[[bin]]
+name = "audit-fix"
+path = "src/bin/audit_fix.rs"
+
 [dependencies]
 # Dependencies for Expr and PureProgram if any, e.g., serde for derive
 serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
 quote = { workspace = true }
 syn = { workspace = true, features = ["full", "extra-traits"] }
 proc-macro2 = { workspace = true }
 lru = "0.12"
 once_cell = "1.19"
+regex = "1.10"

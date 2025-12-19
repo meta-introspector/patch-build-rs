@@ -2,6 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module has real analysis mixed with conceptual claims
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-008: Conceptual ring properties (not proven algebraic structure)
+// FKD-007: Static DOT graph (hardcoded example, not dynamically generated)
+// CON-002: Environment-dependent paths (/nix/store may fail on non-NixOS)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn analyze_rustc_ring_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {

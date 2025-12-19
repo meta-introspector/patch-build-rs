@@ -2,6 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module generates illustrative Solana code
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-003: Template Solana contracts (not production-ready)
+// FKD-002: Fake blockhash fallback ('11111111111111111111111111111111')
+// FKD-003: Placeholder block hash ('sample_block_hash')
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn purchase_blocks_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let api_provider = input_str.value();
@@ -19,17 +27,19 @@ pub fn purchase_blocks_impl(input: TokenStream) -> TokenStream {
                        &format!("https://{}/api", #api_provider)])
                 .output();
                 
+            // AUDIT: fakedata!("Fallback uses fake blockhash when curl fails")
             let block_data = match curl_result {
                 Ok(output) => String::from_utf8_lossy(&output.stdout).to_string(),
-                Err(_) => r#"{"result":{"value":{"blockhash":"11111111111111111111111111111111","feeCalculator":{"lamportsPerSignature":5000}}}}"#.to_string()
+                Err(_) => r#"{"result":{"value":{"blockhash":"11111111111111111111111111111111","feeCalculator":{"lamportsPerSignature":5000}}}}"#.to_string() // [FAKEDATA: hardcoded fallback]
             };
             
+            // AUDIT: phony!("sample_block_hash is placeholder, not real blockchain data")
             // Extract block hash for lifting
             let block_hash = block_data
                 .split("blockhash")
                 .nth(1)
                 .and_then(|s| s.split('"').nth(2))
-                .unwrap_or("sample_block_hash");
+                .unwrap_or("sample_block_hash"); // [FAKEDATA: fallback placeholder]
                 
             println!("cargo:warning=📦 Acquired block: {}", &block_hash[..8]);
             block_data

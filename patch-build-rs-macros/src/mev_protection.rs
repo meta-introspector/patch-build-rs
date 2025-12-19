@@ -2,6 +2,14 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUDIT TICKETS: This module generates illustrative MEV protection patterns
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHO-006: Naive MEV detection (simplistic string matching)
+// FKD-005: Always-true transaction matcher (placeholder implementation)
+// ISS-003: Not production-ready protection
+// ═══════════════════════════════════════════════════════════════════════════════
+
 pub fn sandwich_detect_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let tx_pattern = input_str.value();
