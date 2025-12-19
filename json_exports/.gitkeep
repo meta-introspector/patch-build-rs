@@ -1,0 +1,9 @@
+# JSON Exports Directory
+
+Generated JSON representations of Lean4 Expr objects:
+
+- theorem.json - Theorem expressions as JSON
+- definition.json - Definition expressions as JSON  
+- structure.json - Structure expressions as JSON
+- bridge.json - Rustc↔Lean4 bridge configuration
+- monster_proof.json - Monster group proof in JSON format

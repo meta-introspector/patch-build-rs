@@ -1,0 +1,7 @@
+# Lean4 Patches Directory
+
+Generated Lean4 patches for enhanced functionality:
+
+- json_export.lean - Adds JSON serialization for Expr objects
+- monster_integration.lean - Monster group integration patches
+- rustc_bridge.lean - Rustc compiler bridge functionality

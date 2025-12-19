@@ -15,6 +15,27 @@ mod graph_partition;
 mod context_knapsack;
 mod zk_proof;
 mod lean4_proof;
+mod lean4_json;
+
+#[proc_macro]
+pub fn lean4_expr_json(input: TokenStream) -> TokenStream {
+    lean4_json::lean4_expr_json_impl(input)
+}
+
+#[proc_macro]
+pub fn rustc_lean4_bridge(input: TokenStream) -> TokenStream {
+    lean4_json::rustc_lean4_bridge_impl(input)
+}
+
+#[proc_macro]
+pub fn lean4_patch(input: TokenStream) -> TokenStream {
+    lean4_json::lean4_patch_impl(input)
+}
+
+#[proc_macro]
+pub fn json_monster_proof(input: TokenStream) -> TokenStream {
+    lean4_json::json_monster_proof_impl(input)
+}
 
 #[proc_macro]
 pub fn lean4_theorem(input: TokenStream) -> TokenStream {
