@@ -1,0 +1,8 @@
+node_0 :type :File .
+node_1 :type :UseDecl .
+node_1 :path "use solfun_macros :: { llm , mcp , dwim , github , huggingface , codeberg , twitter , discord , telegram , reddit , wikipedia , wikidata , osm , foaf , owl , oil , daml , cwm , euler } ; . tree" .
+node_0 :item_0 node_1 .
+node_2 :type :FunctionDecl .
+node_2 :name "main" .
+node_2 :visibility Visibility::Inherited .
+node_0 :item_1 node_2 .
