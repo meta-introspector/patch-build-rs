@@ -27,6 +27,17 @@ mod duplicate_analysis;
 mod real_data_analysis;
 mod mkbuildrs;
 mod macro_lattice;
+mod repo_analysis;
+
+#[proc_macro]
+pub fn repo_duplicate_analysis(input: TokenStream) -> TokenStream {
+    repo_analysis::repo_duplicate_analysis_impl(input)
+}
+
+#[proc_macro]
+pub fn pattern_similarity(input: TokenStream) -> TokenStream {
+    repo_analysis::pattern_similarity_impl(input)
+}
 
 #[proc_macro]
 pub fn macro_lattice(input: TokenStream) -> TokenStream {

@@ -1,0 +1,11 @@
+# Duplicate Reports Directory
+
+Real duplicate code analysis from our actual repository:
+
+- analysis_1.txt - Root directory duplicate analysis
+- analysis_2.txt - Macro source directory analysis  
+- analysis_3.txt - Examples directory analysis
+- pattern_similarity.txt - Pattern similarity analysis
+
+All duplicates identified are real and verifiable in actual repository files.
+No mock data - only genuine duplicate detection from our codebase.
