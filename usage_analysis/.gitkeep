@@ -1,0 +1,15 @@
+# Usage Analysis Directory
+
+Macro usage analysis using Tower of Reflection architecture:
+
+- reflected_code.txt - Code lifted to Lean4 Expr data structure (Level 3)
+- vfs_structure.txt - Functional VFS hierarchy at /proc/grast/rust_code/
+- grast_patterns.ttl - RDF Turtle format macro invocation patterns
+- llm_statistics.txt - AI-generated statistical analysis
+- call_graph_in.json - Macro dependency graph with usage counts
+
+Analysis follows the complete Tower of Reflection methodology:
+1. Source Ingestion and Reflective Ascent
+2. Semantic Indexing via VFS  
+3. Structural Extraction with GRAST
+4. Statistical Summarization via AI
