@@ -9,7 +9,7 @@ pub fn llm_impl(input: TokenStream) -> TokenStream {
     let span = request.span();
 
     let tool_name = "llm_text_generation_service";
-    let tool_args = format!("request: \"{{}}\"", request_content); // Corrected format string
+    let tool_args = format!("request: \"{}\"", request_content);
 
     quote_spanned! {span =>
         eprintln!("\n🧠 LLM! Interpreted request: \"{{}}\". Resolving to toolcall!\n", #request);

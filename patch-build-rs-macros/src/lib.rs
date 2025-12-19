@@ -1,338 +1,362 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, ItemFn, Visibility, ReturnType};
-use proc_macro2; // Import proc_macro2 for its TokenStream type
-#[allow(unused_imports)]
-use introspector_core::{Expr, PureProgram, NewQuoteTrait}; // Import NewQuoteTrait
-// Removed `use std::hash::{DefaultHasher, Hash, Hasher}`;
-// Removed `use std::str::FromStr`;
-use syn::File; // Import File for parsing a whole Rust file
-// Removed `use syn::parse::{Parse, ParseStream, Result as SynResult}`; // Removed custom parsing imports
+use syn::{parse_macro_input, LitStr};
 
+mod rust_nix;
+mod rustc_ring;
+mod lmfdb_morph;
+mod sat_lfunction;
+mod dao_governance;
+mod solana_lift;
+mod quant_trading;
+mod mev_protection;
+mod event_memory;
+mod graph_partition;
+mod context_knapsack;
 
 #[proc_macro]
-pub fn pure_reflect(input: TokenStream) -> TokenStream {
-    __newquote_implementation_default(input)
-}
-
-// Placeholder for grast!
-#[proc_macro]
-pub fn grast(input: TokenStream) -> TokenStream {
-    let file = parse_macro_input!(input as File);
-    let mut rdf_turtle_triplets = Vec::new();
-
-    // Iterate over the items in the file
-    for item in file.items {
-        if let syn::Item::Fn(func) = item {
-            // Found a function declaration
-            let func_name = func.sig.ident.to_string();
-            let func_visibility = match func.vis {
-                Visibility::Public(_) => "Public".to_string(),
-                _ => "Inherited".to_string(), // Default to Inherited for other visibilities
-            };
-
-            // Generate RDF Turtle triplets for function declaration
-            // Subject: Function URI (e.g., :func_calculate_sum)
-            // Predicate: :type
-            // Object: :FunctionDecl
-            rdf_turtle_triplets.push(format!(
-                ":func_{} :type :FunctionDecl .",
-                func_name
-            ));
-            // Predicate: :name
-            // Object: literal function name
-            rdf_turtle_triplets.push(format!(
-                ":func_{} :name \"{}\" .",
-                func_name, func_name
-            ));
-            // Predicate: :visibility
-            // Object: literal visibility
-            rdf_turtle_triplets.push(format!(
-                ":func_{} :visibility \"{}\" .",
-                func_name, func_visibility
-            ));
-
-            // Basic parameters: just count for now
-            let param_count = func.sig.inputs.len();
-            rdf_turtle_triplets.push(format!(
-                ":func_{} :paramCount \"{}\"^^xsd:integer .",
-                func_name, param_count
-            ));
-
-            // Basic return type: just "exists" for now
-            let has_return_type = matches!(func.sig.output, ReturnType::Type(_, _));
-            if has_return_type {
-                rdf_turtle_triplets.push(format!(
-                    ":func_{} :hasReturnType \"true\"^^xsd:boolean .",
-                    func_name
-                ));
-            } else {
-                 rdf_turtle_triplets.push(format!(
-                    ":func_{} :hasReturnType \"false\"^^xsd:boolean .",
-                    func_name
-                ));
-            }
-        }
-        // TODO: Add logic for StructDecl, EnumDecl, TraitDecl, ModDecl, UseDecl
-    }
-
-    let rdf_output = rdf_turtle_triplets.join("\n");
-
-    // Return the RDF Turtle string wrapped in a quote! block
-    quote! {
-        #rdf_output
-    }
-    .into()
+pub fn backpack_fill(input: TokenStream) -> TokenStream {
+    context_knapsack::backpack_fill_impl(input)
 }
 
 #[proc_macro]
-pub fn structural_grep(input: TokenStream) -> TokenStream {
-    let mut iter = input.into_iter();
+pub fn context_optimize(input: TokenStream) -> TokenStream {
+    context_knapsack::context_optimize_impl(input)
+}
 
-    let rdf_data_expr_tokens_pm = iter.next().expect("Expected RDF data expression as first argument");
-    let _comma_token_pm = iter.next().expect("Expected comma after RDF data expression"); // Consume comma
-    let pattern_expr_tokens_pm = iter.next().expect("Expected pattern expression as second argument");
+#[proc_macro]
+pub fn token_weight(input: TokenStream) -> TokenStream {
+    context_knapsack::token_weight_impl(input)
+}
 
-    // Correct conversion from proc_macro::TokenTree to proc_macro2::TokenStream
-    let rdf_data_expr_tokens: proc_macro2::TokenStream = rdf_data_expr_tokens_pm.to_string().parse().unwrap();
-    let pattern_expr_tokens: proc_macro2::TokenStream = pattern_expr_tokens_pm.to_string().parse().unwrap();
+#[proc_macro]
+pub fn context_compress(input: TokenStream) -> TokenStream {
+    context_knapsack::context_compress_impl(input)
+}
 
+#[proc_macro]
+pub fn nix_event(input: TokenStream) -> TokenStream {
+    event_memory::nix_event_impl(input)
+}
 
-    // We can't evaluate these expressions at macro-expansion time.
-    // Instead, we will generate code that evaluates them at runtime.
+#[proc_macro]
+pub fn github_event(input: TokenStream) -> TokenStream {
+    event_memory::github_event_impl(input)
+}
 
+#[proc_macro]
+pub fn archive_event(input: TokenStream) -> TokenStream {
+    event_memory::archive_event_impl(input)
+}
+
+#[proc_macro]
+pub fn huggingface_event(input: TokenStream) -> TokenStream {
+    event_memory::huggingface_event_impl(input)
+}
+
+#[proc_macro]
+pub fn twitter_event(input: TokenStream) -> TokenStream {
+    event_memory::twitter_event_impl(input)
+}
+
+#[proc_macro]
+pub fn telegram_event(input: TokenStream) -> TokenStream {
+    event_memory::telegram_event_impl(input)
+}
+
+#[proc_macro]
+pub fn sat_group(input: TokenStream) -> TokenStream {
+    graph_partition::sat_group_impl(input)
+}
+
+#[proc_macro]
+pub fn metis_partition(input: TokenStream) -> TokenStream {
+    graph_partition::metis_partition_impl(input)
+}
+
+#[proc_macro]
+pub fn memory_select(input: TokenStream) -> TokenStream {
+    graph_partition::memory_select_impl(input)
+}
+
+#[proc_macro]
+pub fn code_split(input: TokenStream) -> TokenStream {
+    graph_partition::code_split_impl(input)
+}
+
+#[proc_macro]
+pub fn sandwich_detect(input: TokenStream) -> TokenStream {
+    mev_protection::sandwich_detect_impl(input)
+}
+
+#[proc_macro]
+pub fn frontrun_block(input: TokenStream) -> TokenStream {
+    mev_protection::frontrun_block_impl(input)
+}
+
+#[proc_macro]
+pub fn mev_exclude(input: TokenStream) -> TokenStream {
+    mev_protection::mev_exclude_impl(input)
+}
+
+#[proc_macro]
+pub fn atomic_swap(input: TokenStream) -> TokenStream {
+    mev_protection::atomic_swap_impl(input)
+}
+
+#[proc_macro]
+pub fn purchase_blocks(input: TokenStream) -> TokenStream {
+    solana_lift::purchase_blocks_impl(input)
+}
+
+#[proc_macro]
+pub fn lift_int_code(input: TokenStream) -> TokenStream {
+    solana_lift::lift_int_code_impl(input)
+}
+
+#[proc_macro]
+pub fn ca(input: TokenStream) -> TokenStream {
+    solana_lift::ca_macro_impl(input)
+}
+
+#[proc_macro]
+pub fn token(input: TokenStream) -> TokenStream {
+    solana_lift::token_macro_impl(input)
+}
+
+#[proc_macro]
+pub fn lp(input: TokenStream) -> TokenStream {
+    solana_lift::lp_macro_impl(input)
+}
+
+#[proc_macro]
+pub fn quant(input: TokenStream) -> TokenStream {
+    quant_trading::quant_impl(input)
+}
+
+#[proc_macro]
+pub fn trading(input: TokenStream) -> TokenStream {
+    quant_trading::trading_impl(input)
+}
+
+#[proc_macro]
+pub fn load_historical(input: TokenStream) -> TokenStream {
+    quant_trading::load_historical_impl(input)
+}
+
+#[proc_macro]
+pub fn dao_vote(input: TokenStream) -> TokenStream {
+    dao_governance::dao_vote_impl(input)
+}
+
+#[proc_macro]
+pub fn paxos_consensus(input: TokenStream) -> TokenStream {
+    dao_governance::paxos_consensus_impl(input)
+}
+
+#[proc_macro]
+pub fn apply_patch(input: TokenStream) -> TokenStream {
+    dao_governance::apply_patch_impl(input)
+}
+
+#[proc_macro]
+pub fn token_governance(input: TokenStream) -> TokenStream {
+    dao_governance::token_governance_impl(input)
+}
+
+#[proc_macro]
+pub fn sat_solve_unity(input: TokenStream) -> TokenStream {
+    sat_lfunction::sat_solve_unity_impl(input)
+}
+
+#[proc_macro]
+pub fn extract_lfunction(input: TokenStream) -> TokenStream {
+    sat_lfunction::extract_lfunction_impl(input)
+}
+
+#[proc_macro]
+pub fn matrix_decompose(input: TokenStream) -> TokenStream {
+    sat_lfunction::matrix_decompose_impl(input)
+}
+
+#[proc_macro]
+pub fn unity_proof(input: TokenStream) -> TokenStream {
+    sat_lfunction::unity_proof_impl(input)
+}
+
+#[proc_macro]
+pub fn load_lmfdb(input: TokenStream) -> TokenStream {
+    lmfdb_morph::load_lmfdb_impl(input)
+}
+
+#[proc_macro]
+pub fn conformal_map(input: TokenStream) -> TokenStream {
+    lmfdb_morph::conformal_map_impl(input)
+}
+
+#[proc_macro]
+pub fn hott_morph(input: TokenStream) -> TokenStream {
+    lmfdb_morph::hott_morph_impl(input)
+}
+
+#[proc_macro]
+pub fn monster_check(input: TokenStream) -> TokenStream {
+    lmfdb_morph::monster_check_impl(input)
+}
+
+#[proc_macro]
+pub fn analyze_rustc_ring(input: TokenStream) -> TokenStream {
+    rustc_ring::analyze_rustc_ring_impl(input)
+}
+
+#[proc_macro]
+pub fn crate_report(input: TokenStream) -> TokenStream {
+    rustc_ring::crate_report_impl(input)
+}
+
+#[proc_macro]
+pub fn dependency_graph(input: TokenStream) -> TokenStream {
+    rustc_ring::dependency_graph_impl(input)
+}
+
+#[proc_macro]
+pub fn ring_properties(input: TokenStream) -> TokenStream {
+    rustc_ring::ring_properties_impl(input)
+}
+
+#[proc_macro]
+pub fn nix_rust_src(input: TokenStream) -> TokenStream {
+    rust_nix::nix_rust_src_impl(input)
+}
+
+#[proc_macro]
+pub fn extract_decl(input: TokenStream) -> TokenStream {
+    rust_nix::extract_decl_impl(input)
+}
+
+#[proc_macro]
+pub fn patch_rust(input: TokenStream) -> TokenStream {
+    rust_nix::patch_rust_impl(input)
+}
+
+#[proc_macro]
+pub fn extract(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let fixme_id = input_str.value();
+    
     quote! {
         {
-            let rdf_turtle_content_runtime: String = #rdf_data_expr_tokens; // Evaluate the RDF data expression
-            let pattern_runtime: String = #pattern_expr_tokens; // Evaluate the pattern expression
-
-            let mut matched_lines = Vec::new();
-            for line in rdf_turtle_content_runtime.lines() {
-                if line.contains(&pattern_runtime) {
-                    matched_lines.push(line.to_string());
-                }
-            }
-            matched_lines
+            use std::fs;
+            let dir = format!("extracted/fixme-{}", #fixme_id.len());
+            fs::create_dir_all(&dir).ok();
+            println!("cargo:warning=🔧 Extracted: {}", dir);
         }
-    }
-    .into()
+    }.into()
 }
 
-// Placeholder for lru attribute macro
-#[proc_macro_attribute]
-pub fn lru(args: TokenStream, item: TokenStream) -> TokenStream {
-    let item_fn = parse_macro_input!(item as ItemFn);
-    let args_str = args.to_string();
-    let fn_name = item_fn.sig.ident.to_string();
+#[proc_macro]
+pub fn simplify(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let data = input_str.value();
+    
+    quote! {
+        {
+            let simplified = #data
+                .lines()
+                .filter(|line| !line.trim().is_empty())
+                .filter(|line| !line.starts_with("//"))
+                .collect::<Vec<_>>()
+                .join("\n");
+            println!("cargo:warning=📉 Simplified: {} -> {} lines", 
+                #data.lines().count(), simplified.lines().count());
+            simplified
+        }
+    }.into()
+}
 
-    eprintln!("\n✅ LRU! Conceptually applying LRU caching to function '{}' with args: '{}'\n", fn_name, args_str);
+#[proc_macro]
+pub fn pii(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let data = input_str.value();
+    
+    quote! {
+        {
+            let cleaned = #data
+                .replace("/home/", "/home/<user>/")
+                .replace("/Users/", "/Users/<user>/")
+                .replace("@gmail.com", "@<email>")
+                .replace("@company.com", "@<company>");
+            println!("cargo:warning=🔒 PII cleaned");
+            cleaned
+        }
+    }.into()
+}
 
-    quote! { #item_fn }.into()
+#[proc_macro]
+pub fn prune(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let data = input_str.value();
+    
+    quote! {
+        {
+            let pruned = #data
+                .lines()
+                .filter(|line| !line.contains("target/"))
+                .filter(|line| !line.contains(".git/"))
+                .filter(|line| !line.contains("node_modules/"))
+                .take(1000)
+                .collect::<Vec<_>>()
+                .join("\n");
+            println!("cargo:warning=✂️ Pruned: {} -> {} lines", 
+                #data.lines().count(), pruned.lines().count());
+            pruned
+        }
+    }.into()
+}
+
+#[proc_macro]
+pub fn compress(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let data = input_str.value();
+    
+    quote! {
+        {
+            let compressed = #data
+                .split_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ");
+            println!("cargo:warning=🗜️ Compressed: {} -> {} chars", 
+                #data.len(), compressed.len());
+            compressed
+        }
+    }.into()
+}
+
+#[proc_macro]
+pub fn ticket(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let issue = input_str.value();
+    
+    quote! {
+        println!("🎫 Ticket: {}", #issue);
+    }.into()
+}
+
+#[proc_macro]
+pub fn value(input: TokenStream) -> TokenStream {
+    let input_str = parse_macro_input!(input as LitStr);
+    let amount = input_str.value();
+    
+    quote! {
+        println!("💰 Bounty: {}", #amount);
+    }.into()
 }
 
 #[proc_macro]
 pub fn mkbuildrs(input: TokenStream) -> TokenStream {
-    let mut output_tokens = proc_macro2::TokenStream::new();
-    let parsed_input = syn::parse_macro_input!(input as MkBuildRsConfigInput);
-
-    // Existing logic from old mkbuildrs:
-    let input_str = parsed_input.original_input_str; // Store original input string
-    let escaped_input_str = input_str.replace("{", "{{").replace("}", "}}"); // Escape curly braces
-
-    output_tokens.extend(quote! {
-        eprintln!("\n🏗️ MKBUILDRS! Conceptually generating build.rs content from: {}", #escaped_input_str);
-    });
-
-    for (cfg_key, cfg_value) in parsed_input.cfgs {
-        let cfg_key_str = cfg_key.value();
-        let cfg_value_str = cfg_value.value();
-        output_tokens.extend(quote! {
-            println!("cargo:rustc-cfg={}=\"{{}}\"", #cfg_key_str, #cfg_value_str);
-        });
-    }
-
-    for (check_cfg_key, check_cfg_values) in parsed_input.check_cfgs {
-        let values_quoted = check_cfg_values.into_iter()
-            .map(|s| format!("\"{}\"", s.value()))
-            .collect::<Vec<String>>()
-            .join(", ");
-        let check_cfg_key_str = check_cfg_key.value(); // Extract value from LitStr
-        output_tokens.extend(quote! {
-            println!("cargo:rustc-check-cfg=cfg({} values({}))", #check_cfg_key_str, #values_quoted);
-        });
-    }
-
-    if let Some(resource_req) = parsed_input.resource_req {
-        let resource_req_str = resource_req.to_string(); // Convert TokenStream to String
-        output_tokens.extend(quote! {
-            println!("cargo:resource_req={}", #resource_req_str);
-        });
-    }
-
-    for secret in parsed_input.secret_req {
-        output_tokens.extend(quote! {
-            println!("cargo:secret_req={}", #secret);
-        });
-    }
-
-
-    if let Some(lib_rs_content) = parsed_input.generate_lib_rs {
-        let escaped_lib_rs_content = lib_rs_content.value().replace("{", "{{").replace("}", "}}");
-        // Output a cargo:rustc-env instruction
-        output_tokens.extend(quote! {
-            println!("cargo:rustc-env=GENERATED_LIB_RS_CONTENT={}", #escaped_lib_rs_content);
-        });
-    }
-
-    output_tokens.into()
-}
-
-// Define ConfigInput for mkbuildrs!
-struct MkBuildRsConfigInput {
-    generate_lib_rs: Option<syn::LitStr>,
-    cfgs: Vec<(syn::LitStr, syn::LitStr)>, // Stores (key, value) for cfg:
-    check_cfgs: Vec<(syn::LitStr, Vec<syn::LitStr>)>, // Stores (key, values) for check_cfg:
-    resource_req: Option<proc_macro2::TokenStream>, // Stores the block directly
-    secret_req: Vec<syn::LitStr>, // Stores list of secrets
-    original_input_str: String,
-}
-
-impl syn::parse::Parse for MkBuildRsConfigInput {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let original_input_str = input.to_string(); // Capture original input string
-        let mut generate_lib_rs = None;
-        let mut cfgs = Vec::new();
-        let mut check_cfgs = Vec::new();
-        let mut resource_req = None;
-        let mut secret_req = Vec::new();
-
-        while !input.is_empty() {
-            let key: syn::Ident = input.parse()?;
-            input.parse::<syn::Token![:]>()?; // Parse ':'
-
-            if key == "generate_lib_rs" {
-                let content: syn::LitStr = input.parse()?;
-                generate_lib_rs = Some(content);
-            } else if key == "cfg" {
-                let cfg_key: syn::LitStr = input.parse()?;
-                input.parse::<syn::Token![=]>()?; // Parse '='
-                let cfg_value: syn::LitStr = input.parse()?;
-                cfgs.push((cfg_key, cfg_value));
-            } else if key == "check_cfg" {
-                let check_cfg_key: syn::LitStr = input.parse()?;
-                input.parse::<syn::Token![,]>()?; // Parse ','
-                let check_cfg_values_ident: syn::Ident = input.parse()?; // Expect 'values'
-                if check_cfg_values_ident != "values" {
-                    return Err(input.error("expected 'values' after check_cfg key"));
-                }
-                input.parse::<syn::Token![=]>()?; // Parse '='
-                let values_content;
-                syn::bracketed!(values_content in input); // Parse [...] 
-                let check_cfg_values: syn::punctuated::Punctuated<syn::LitStr, syn::Token![,]> =
-                    values_content.parse_terminated(|parser_input: syn::parse::ParseStream| parser_input.parse::<syn::LitStr>(), syn::Token![,])?;
-                check_cfgs.push((check_cfg_key, check_cfg_values.into_iter().collect())); // Fixed here
-            } else if key == "resource_req" {
-                let content;
-                syn::braced!(content in input); // Parse { ... } 
-                resource_req = Some(content.parse()?); // Capture the whole block as TokenStream
-            } else if key == "secret_req" {
-                let content;
-                syn::bracketed!(content in input); // Parse [...] 
-                let secrets: syn::punctuated::Punctuated<syn::LitStr, syn::Token![,]> =
-                    content.parse_terminated(|parser_input: syn::parse::ParseStream| parser_input.parse::<syn::LitStr>(), syn::Token![,])?;
-                secret_req.extend(secrets.into_iter());
-            } else {
-                return Err(input.error(format!("unexpected key: {}", key)));
-            }
-
-            // Parse optional semicolon
-            if input.peek(syn::Token![;]) {
-                input.parse::<syn::Token![;]>()?;
-            }
-        }
-        Ok(MkBuildRsConfigInput {
-            generate_lib_rs,
-            cfgs,
-            check_cfgs,
-            resource_req,
-            secret_req,
-            original_input_str,
-        })
-    }
-}
-
-#[proc_macro]
-#[doc(hidden)] // Hide from documentation as it's an internal detail
-pub fn __quote_implementation(input: TokenStream) -> TokenStream {
-    // By default, __quote_implementation simply delegates to the original quote! macro.
-    // Users can override this by defining their own __quote_implementation in a higher-priority crate.
-    let input_proc_macro2: proc_macro2::TokenStream = input.into();
-    quote! { #input_proc_macro2 }.into()
-}
-
-#[proc_macro]
-#[doc(hidden)] // Hide from documentation as it's an internal detail
-pub fn __newquote_implementation(input: TokenStream) -> TokenStream {
-    // By default, __newquote_implementation calls __newquote_implementation_default.
-    // Users can override this by defining their own __newquote_implementation in a higher-priority crate.
-    __newquote_implementation_default(input)
-}
-
-#[proc_macro]
-pub fn __newquote_implementation_default(input: TokenStream) -> TokenStream {
-    let input_proc_macro2: proc_macro2::TokenStream = input.clone().into();
-    let input_str = input_proc_macro2.to_string();
-
+    let input_str = input.to_string();
+    
     quote! {
-        {
-            use std::str::FromStr;
-            use introspector_core::{Expr, PureProgram, NewQuoteTrait};
-            use std::hash::{DefaultHasher, Hash, Hasher};
-
-            let current_input_str = #input_str.to_string();
-
-            let mut runtime_hasher = DefaultHasher::new();
-            current_input_str.hash(&mut runtime_hasher);
-            let runtime_hashed_value = runtime_hasher.finish();
-
-            let mut set = std::collections::BTreeSet::new();
-            set.insert(runtime_hashed_value);
-            let program_name = format!("reflected_program_{}", runtime_hashed_value);
-            let generated_pure_program = introspector_core::PureProgram { set, name: program_name };
-            let generated_expr = introspector_core::Expr::PureAttractor(generated_pure_program);
-
-            let string_to_return = current_input_str;
-
-            // Acquire lock on the cache
-            let mut cache = introspector_core::EXPR_CACHE.lock().unwrap();
-
-            // Check if the Expr is already in the cache
-            if let Some((cached_expr, cached_str)) = cache.get(&runtime_hashed_value) {
-                (cached_expr.clone(), cached_str.clone())
-            } else {
-                eprintln!("📝 Quoted Object (Expr) for hash {}:\n{:#?}", runtime_hashed_value, generated_expr);
-                cache.put(runtime_hashed_value, (generated_expr.clone(), string_to_return.clone()));
-                (generated_expr, string_to_return)
-            }
-        }
-    }
-    .into()
-}
-
-#[proc_macro]
-pub fn newquote(input: TokenStream) -> TokenStream {
-    // This is the user-facing macro that can be overridden.
-    // By default, it calls __quote_implementation, which in turn calls the original quote!.
-    __quote_implementation(input)
-}
-
-#[proc_macro]
-pub fn eval_macro(input: TokenStream) -> TokenStream {
-    // Phase 1: Capture the AST and store it using __newquote_implementation_default!
-    // This will print the Expr and store it in the LRU cache.
-    let _expr_capture_tokens = __newquote_implementation_default(input.clone()); // Clone input to use it again
-
-    // Phase 2: Return the original input, after the side effect of __newquote_implementation_default! has happened.
-    // This ensures that the AST is captured, but the original macro still expands.
-    input
+        eprintln!("🏗️ MKBUILDRS: {}", #input_str);
+    }.into()
 }

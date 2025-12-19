@@ -1,0 +1,36 @@
+# MEV Pattern Database
+# Known sandwich trading and frontrunning patterns for exclusion
+
+[sandwich_patterns]
+classic = "buy->victim_tx->sell"
+atomic = "flash_loan->buy->victim->sell->repay"
+multi_hop = "buy_token_a->swap_a_to_b->victim_b_to_c->sell_token_c"
+cross_dex = "buy_uniswap->victim_sushiswap->sell_uniswap"
+
+[frontrun_patterns]
+gas_war = "high_gas_price->copy_transaction->submit_first"
+mempool_snipe = "detect_profitable_tx->frontrun->profit"
+priority_fee = "max_priority_fee->copy_params->execute_first"
+
+[arbitrage_patterns]
+dex_arb = "buy_dex1->sell_dex2->profit"
+flash_arb = "flash_loan->arbitrage->repay->profit"
+triangular = "token_a->token_b->token_c->token_a"
+
+[exclusion_rules]
+# Compile-time exclusion patterns
+sandwich_threshold = 0.02  # 2% price impact threshold
+gas_multiplier_limit = 1.5  # Max 1.5x average gas price
+slippage_protection = 0.005  # 0.5% max slippage
+atomic_swap_only = true     # Force atomic execution
+
+[protection_levels]
+basic = ["sandwich_detect", "frontrun_block"]
+advanced = ["mev_exclude", "atomic_swap", "gas_analysis"]
+maximum = ["all_patterns", "dao_governance", "l_function_analysis"]
+
+[dao_parameters]
+# Democratic control of MEV protection
+voting_threshold = 0.67  # 67% supermajority for changes
+protection_updates = "weekly"  # Update frequency
+community_reporting = true     # Allow community MEV reports

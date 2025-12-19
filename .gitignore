@@ -1,1 +1,4 @@
 target
+# Large turtle files
+output/grandparent_recursive.ttl
+output/parent_recursive.ttl

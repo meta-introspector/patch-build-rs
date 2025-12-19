@@ -1,0 +1,18 @@
+[refactor]
+name = "example_refactor"
+output_format = "tar" # or "directory"
+
+[[splits]]
+pattern = "fn calculate_"
+wrap_with = ["prelude", "mkdecl"]
+imports = ["std::collections::*"]
+
+[[splits]]
+pattern = "struct.*Config"
+wrap_with = ["mkdecl"]
+imports = ["serde::{Serialize, Deserialize}"]
+
+[export]
+target_dir = "./refactored_code"
+create_tar = true
+tar_name = "refactored.tar.gz"
