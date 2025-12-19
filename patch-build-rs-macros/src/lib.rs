@@ -1,11 +1,14 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, ItemFn};
+use syn::{parse_macro_input, ItemFn, Visibility, ReturnType};
 use proc_macro2; // Import proc_macro2 for its TokenStream type
 #[allow(unused_imports)]
 use introspector_core::{Expr, PureProgram, NewQuoteTrait}; // Import NewQuoteTrait
-// Removed `use std::hash::{DefaultHasher, Hash, Hasher};`
-// Removed `use std::str::FromStr;`
+// Removed `use std::hash::{DefaultHasher, Hash, Hasher}`;
+// Removed `use std::str::FromStr`;
+use syn::File; // Import File for parsing a whole Rust file
+// Removed `use syn::parse::{Parse, ParseStream, Result as SynResult}`; // Removed custom parsing imports
+
 
 #[proc_macro]
 pub fn pure_reflect(input: TokenStream) -> TokenStream {
@@ -15,9 +18,102 @@ pub fn pure_reflect(input: TokenStream) -> TokenStream {
 // Placeholder for grast!
 #[proc_macro]
 pub fn grast(input: TokenStream) -> TokenStream {
-    let input_str = input.to_string();
+    let file = parse_macro_input!(input as File);
+    let mut rdf_turtle_triplets = Vec::new();
+
+    // Iterate over the items in the file
+    for item in file.items {
+        if let syn::Item::Fn(func) = item {
+            // Found a function declaration
+            let func_name = func.sig.ident.to_string();
+            let func_visibility = match func.vis {
+                Visibility::Public(_) => "Public".to_string(),
+                _ => "Inherited".to_string(), // Default to Inherited for other visibilities
+            };
+
+            // Generate RDF Turtle triplets for function declaration
+            // Subject: Function URI (e.g., :func_calculate_sum)
+            // Predicate: :type
+            // Object: :FunctionDecl
+            rdf_turtle_triplets.push(format!(
+                ":func_{} :type :FunctionDecl .",
+                func_name
+            ));
+            // Predicate: :name
+            // Object: literal function name
+            rdf_turtle_triplets.push(format!(
+                ":func_{} :name \"{}\" .",
+                func_name, func_name
+            ));
+            // Predicate: :visibility
+            // Object: literal visibility
+            rdf_turtle_triplets.push(format!(
+                ":func_{} :visibility \"{}\" .",
+                func_name, func_visibility
+            ));
+
+            // Basic parameters: just count for now
+            let param_count = func.sig.inputs.len();
+            rdf_turtle_triplets.push(format!(
+                ":func_{} :paramCount \"{}\"^^xsd:integer .",
+                func_name, param_count
+            ));
+
+            // Basic return type: just "exists" for now
+            let has_return_type = matches!(func.sig.output, ReturnType::Type(_, _));
+            if has_return_type {
+                rdf_turtle_triplets.push(format!(
+                    ":func_{} :hasReturnType \"true\"^^xsd:boolean .",
+                    func_name
+                ));
+            } else {
+                 rdf_turtle_triplets.push(format!(
+                    ":func_{} :hasReturnType \"false\"^^xsd:boolean .",
+                    func_name
+                ));
+            }
+        }
+        // TODO: Add logic for StructDecl, EnumDecl, TraitDecl, ModDecl, UseDecl
+    }
+
+    let rdf_output = rdf_turtle_triplets.join("\n");
+
+    // Return the RDF Turtle string wrapped in a quote! block
     quote! {
-        format!("Conceptual RDF Turtle of: {}", #input_str)
+        #rdf_output
+    }
+    .into()
+}
+
+#[proc_macro]
+pub fn structural_grep(input: TokenStream) -> TokenStream {
+    let mut iter = input.into_iter();
+
+    let rdf_data_expr_tokens_pm = iter.next().expect("Expected RDF data expression as first argument");
+    let _comma_token_pm = iter.next().expect("Expected comma after RDF data expression"); // Consume comma
+    let pattern_expr_tokens_pm = iter.next().expect("Expected pattern expression as second argument");
+
+    // Correct conversion from proc_macro::TokenTree to proc_macro2::TokenStream
+    let rdf_data_expr_tokens: proc_macro2::TokenStream = rdf_data_expr_tokens_pm.to_string().parse().unwrap();
+    let pattern_expr_tokens: proc_macro2::TokenStream = pattern_expr_tokens_pm.to_string().parse().unwrap();
+
+
+    // We can't evaluate these expressions at macro-expansion time.
+    // Instead, we will generate code that evaluates them at runtime.
+
+    quote! {
+        {
+            let rdf_turtle_content_runtime: String = #rdf_data_expr_tokens; // Evaluate the RDF data expression
+            let pattern_runtime: String = #pattern_expr_tokens; // Evaluate the pattern expression
+
+            let mut matched_lines = Vec::new();
+            for line in rdf_turtle_content_runtime.lines() {
+                if line.contains(&pattern_runtime) {
+                    matched_lines.push(line.to_string());
+                }
+            }
+            matched_lines
+        }
     }
     .into()
 }
@@ -41,16 +137,17 @@ pub fn mkbuildrs(input: TokenStream) -> TokenStream {
 
     // Existing logic from old mkbuildrs:
     let input_str = parsed_input.original_input_str; // Store original input string
+    let escaped_input_str = input_str.replace("{", "{{").replace("}", "}}"); // Escape curly braces
 
     output_tokens.extend(quote! {
-        eprintln!("\n🏗️ MKBUILDRS! Conceptually generating build.rs content from: {}", #input_str);
+        eprintln!("\n🏗️ MKBUILDRS! Conceptually generating build.rs content from: {}", #escaped_input_str);
     });
 
     for (cfg_key, cfg_value) in parsed_input.cfgs {
         let cfg_key_str = cfg_key.value();
         let cfg_value_str = cfg_value.value();
         output_tokens.extend(quote! {
-            println!("cargo:rustc-cfg={}=\"{}\"", #cfg_key_str, #cfg_value_str);
+            println!("cargo:rustc-cfg={}=\"{{}}\"", #cfg_key_str, #cfg_value_str);
         });
     }
 
@@ -61,7 +158,7 @@ pub fn mkbuildrs(input: TokenStream) -> TokenStream {
             .join(", ");
         let check_cfg_key_str = check_cfg_key.value(); // Extract value from LitStr
         output_tokens.extend(quote! {
-            println!("cargo:rustc-check-cfg=cfg({}, values({}))", #check_cfg_key_str, #values_quoted);
+            println!("cargo:rustc-check-cfg=cfg({} values({}))", #check_cfg_key_str, #values_quoted);
         });
     }
 
@@ -80,9 +177,10 @@ pub fn mkbuildrs(input: TokenStream) -> TokenStream {
 
 
     if let Some(lib_rs_content) = parsed_input.generate_lib_rs {
+        let escaped_lib_rs_content = lib_rs_content.value().replace("{", "{{").replace("}", "}}");
         // Output a cargo:rustc-env instruction
         output_tokens.extend(quote! {
-            println!("cargo:rustc-env=GENERATED_LIB_RS_CONTENT={}", #lib_rs_content);
+            println!("cargo:rustc-env=GENERATED_LIB_RS_CONTENT={}", #escaped_lib_rs_content);
         });
     }
 
@@ -129,17 +227,17 @@ impl syn::parse::Parse for MkBuildRsConfigInput {
                 }
                 input.parse::<syn::Token![=]>()?; // Parse '='
                 let values_content;
-                syn::bracketed!(values_content in input); // Parse [...]
+                syn::bracketed!(values_content in input); // Parse [...] 
                 let check_cfg_values: syn::punctuated::Punctuated<syn::LitStr, syn::Token![,]> =
                     values_content.parse_terminated(|parser_input: syn::parse::ParseStream| parser_input.parse::<syn::LitStr>(), syn::Token![,])?;
                 check_cfgs.push((check_cfg_key, check_cfg_values.into_iter().collect())); // Fixed here
             } else if key == "resource_req" {
                 let content;
-                syn::braced!(content in input); // Parse { ... }
+                syn::braced!(content in input); // Parse { ... } 
                 resource_req = Some(content.parse()?); // Capture the whole block as TokenStream
             } else if key == "secret_req" {
                 let content;
-                syn::bracketed!(content in input); // Parse [...]
+                syn::bracketed!(content in input); // Parse [...] 
                 let secrets: syn::punctuated::Punctuated<syn::LitStr, syn::Token![,]> =
                     content.parse_terminated(|parser_input: syn::parse::ParseStream| parser_input.parse::<syn::LitStr>(), syn::Token![,])?;
                 secret_req.extend(secrets.into_iter());
@@ -238,6 +336,3 @@ pub fn eval_macro(input: TokenStream) -> TokenStream {
     // This ensures that the AST is captured, but the original macro still expands.
     input
 }
-
-
-

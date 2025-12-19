@@ -9,3 +9,4 @@ license = "MIT"
 grast_core = { path = "../grast_core" }
 anyhow = { workspace = true }
 syn = { workspace = true } # Needed for parsing files in CLI
+walkdir = "2.5" # Add walkdir for recursive directory traversal

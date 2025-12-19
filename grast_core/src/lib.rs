@@ -5,7 +5,8 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::{self};
 use std::path::{Path};
-use syn::{self, Item, Visibility};
+use syn::{self, Expr, Item, Stmt, Visibility};
+use quote::quote; // Import quote macro for token stream conversion
 
 
 /// Core grast representation: flat triple format
@@ -60,19 +61,19 @@ impl GrastDb {
     }
     
     fn flatten_file(&mut self, file: &syn::File, counter: &mut usize) {
-        let file_id = format!("node_{}", counter);
+        let file_id = format!("node_{{}}", counter);
         *counter += 1;
         
         self.add_triple(&file_id, ":type", ":File");
         
         for (idx, item) in file.items.iter().enumerate() {
             let item_id = self.flatten_item(item, counter);
-            self.add_triple(&file_id, &format!(":item_{}", idx), &item_id);
+            self.add_triple(&file_id, &format!(":item_{{}}", idx), &item_id);
         }
     }
     
     fn flatten_item(&mut self, item: &syn::Item, counter: &mut usize) -> String {
-        let item_id = format!("node_{}", counter);
+        let item_id = format!("node_{{}}", counter);
         *counter += 1;
         
         match item {
@@ -83,25 +84,31 @@ impl GrastDb {
                 
                 // Add parameters
                 for (idx, input) in func.sig.inputs.iter().enumerate() {
-                    let param_id = format!("node_{}", counter);
+                    let param_id = format!("node_{{}}", counter);
                     *counter += 1;
                     self.add_triple(&param_id, ":type", ":Parameter");
-                    self.add_triple(&item_id, &format!(":param_{}", idx), &param_id);
+                    self.add_triple(&item_id, &format!(":param_{{}}", idx), &param_id);
                     // Add parameter details (name, type)
                     if let syn::FnArg::Typed(pat_type) = input {
                         if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
                             self.add_triple(&param_id, ":name", &format!("\"{}\"", pat_ident.ident));
                         }
-                        self.add_triple(&param_id, ":type_name", &format!("\"{}\"", quote::quote!{#pat_type.ty}));
+                        self.add_triple(&param_id, ":type_name", &format!("\"{}\"", quote!{#pat_type.ty}));
                     }
                 }
                 // Add return type
                 if let syn::ReturnType::Type(_, ty) = &func.sig.output {
-                    let return_type_id = format!("node_{}", counter);
+                    let return_type_id = format!("node_{{}}", counter);
                     *counter += 1;
                     self.add_triple(&return_type_id, ":type", ":ReturnType");
                     self.add_triple(&item_id, ":return_type", &return_type_id);
-                    self.add_triple(&return_type_id, ":type_name", &format!("\"{}\"", quote::quote!{#ty}));
+                    self.add_triple(&return_type_id, ":type_name", &format!("\"{}\"", quote!{#ty}));
+                }
+
+                // Flatten function body statements
+                for (idx, stmt) in func.block.stmts.iter().enumerate() {
+                    let stmt_id = self.flatten_stmt(stmt, counter);
+                    self.add_triple(&item_id, &format!(":stmt_{{}}", idx), &stmt_id);
                 }
             }
             Item::Struct(s) => { // Use Item::Struct directly
@@ -112,14 +119,14 @@ impl GrastDb {
                 // Add fields
                 if let syn::Fields::Named(fields) = &s.fields {
                     for (idx, field) in fields.named.iter().enumerate() {
-                        let field_id = format!("node_{}", counter);
+                        let field_id = format!("node_{{}}", counter);
                         *counter += 1;
                         self.add_triple(&field_id, ":type", ":Field");
-                        self.add_triple(&item_id, &format!(":field_{}", idx), &field_id);
+                        self.add_triple(&item_id, &format!(":field_{{}}", idx), &field_id);
                         if let Some(ident) = &field.ident {
                             self.add_triple(&field_id, ":name", &format!("\"{}\"", ident));
                         }
-                        self.add_triple(&field_id, ":type_name", &format!("\"{}\"", quote::quote!{#field.ty}));
+                        self.add_triple(&field_id, ":type_name", &format!("\"{}\"", quote!{#field.ty}));
                     }
                 }
             }
@@ -130,10 +137,10 @@ impl GrastDb {
                 
                 // Add variants
                 for (idx, variant) in e.variants.iter().enumerate() {
-                    let variant_id = format!("node_{}", counter);
+                    let variant_id = format!("node_{{}}", counter);
                     *counter += 1;
                     self.add_triple(&variant_id, ":type", ":Variant");
-                    self.add_triple(&item_id, &format!(":variant_{}", idx), &variant_id);
+                    self.add_triple(&item_id, &format!(":variant_{{}}", idx), &variant_id);
                     self.add_triple(&variant_id, ":name", &format!("\"{}\"", variant.ident));
                 }
             }
@@ -149,11 +156,17 @@ impl GrastDb {
                 self.add_triple(&item_id, ":type", ":ConstDecl");
                 self.add_triple(&item_id, ":name", &format!("\"{}\"", c.ident));
                 self.add_triple(&item_id, ":visibility", &format!("{:?}", c.vis));
+                if let Some(expr_id) = self.flatten_expr(&c.expr, counter) {
+                    self.add_triple(&item_id, ":value", &expr_id);
+                }
             }
             Item::Static(s_item) => { // Use Item::Static directly
                 self.add_triple(&item_id, ":type", ":StaticDecl");
                 self.add_triple(&item_id, ":name", &format!("\"{}\"", s_item.ident));
                 self.add_triple(&item_id, ":visibility", &format!("{:?}", s_item.vis));
+                if let Some(expr_id) = self.flatten_expr(&s_item.expr, counter) {
+                    self.add_triple(&item_id, ":value", &expr_id);
+                }
             }
             Item::Mod(m) => { // Use Item::Mod directly
                 self.add_triple(&item_id, ":type", ":ModDecl");
@@ -162,11 +175,12 @@ impl GrastDb {
             }
             Item::Use(u) => { // Use Item::Use directly
                 self.add_triple(&item_id, ":type", ":UseDecl");
-                self.add_triple(&item_id, ":path", &format!("\"{}\"", quote::quote!{#u.tree}));
+                self.add_triple(&item_id, ":path", &format!("\"{}\"", quote!{#u.tree}));
             }
-            Item::Macro(m_item) => { // Use Item::Macro directly
+            Item::Macro(m_item) => { // Use Item::Macro directly (for macro definitions)
                 self.add_triple(&item_id, ":type", ":MacroDecl");
-                self.add_triple(&item_id, ":name", &format!("\"{}\"", quote::quote!{#m_item.mac.path}));
+                self.add_triple(&item_id, ":name", &format!("\"{}\"", quote!{#m_item.mac.path}));
+                self.add_triple(&item_id, ":tokens", &format!("\"{}\"", quote!{#m_item.mac.tokens}));
             }
             Item::ExternCrate(ec) => { // Use Item::ExternCrate directly
                 self.add_triple(&item_id, ":type", ":ExternCrateDecl");
@@ -186,12 +200,107 @@ impl GrastDb {
             }
             _ => {
                 self.add_triple(&item_id, ":type", ":OtherItem");
-                self.add_triple(&item_id, ":debug_str", &format!("\"{}\"", quote::quote!{#item}));
+                self.add_triple(&item_id, ":debug_str", &format!("\"{}\"", quote!{#item}));
             }
         }
         
         item_id
     }
+
+    fn flatten_stmt(&mut self, stmt: &syn::Stmt, counter: &mut usize) -> String {
+        let stmt_id = format!("node_{{}}", counter);
+        *counter += 1;
+
+        match stmt {
+            Stmt::Local(local) => {
+                self.add_triple(&stmt_id, ":type", ":LocalStmt");
+                if let Some(expr_id) = local.init.as_ref().and_then(|init| self.flatten_expr(&init.expr, counter)) {
+                    self.add_triple(&stmt_id, ":init_expr", &expr_id);
+                }
+            }
+            Stmt::Item(item) => {
+                let item_child_id = self.flatten_item(item, counter);
+                self.add_triple(&stmt_id, ":type", ":ItemStmt");
+                self.add_triple(&stmt_id, ":item", &item_child_id);
+            }
+            Stmt::Expr(expr) => {
+                let expr_id = self.flatten_expr(expr, counter).unwrap_or_else(|| {
+                    let dummy_id = format!("node_{{}}", counter);
+                    *counter += 1;
+                    self.add_triple(&dummy_id, ":type", ":UnknownExpr");
+                    dummy_id
+                });
+                self.add_triple(&stmt_id, ":type", ":ExprStmt");
+                self.add_triple(&stmt_id, ":expr", &expr_id);
+            }
+            Stmt::Semi(expr, _semi) => {
+                let expr_id = self.flatten_expr(expr, counter).unwrap_or_else(|| {
+                    let dummy_id = format!("node_{{}}", counter);
+                    *counter += 1;
+                    self.add_triple(&dummy_id, ":type", ":UnknownExpr");
+                    dummy_id
+                });
+                self.add_triple(&stmt_id, ":type", ":SemiStmt");
+                self.add_triple(&stmt_id, ":expr", &expr_id);
+            }
+            _ => {
+                self.add_triple(&stmt_id, ":type", ":OtherStmt");
+                self.add_triple(&stmt_id, ":debug_str", &format!("\"{}\"", quote!{#stmt}));
+            }
+        }
+        stmt_id
+    }
+
+    fn flatten_expr(&mut self, expr: &syn::Expr, counter: &mut usize) -> Option<String> {
+        let expr_id = format!("node_{{}}", counter);
+        *counter += 1;
+
+        match expr {
+            Expr::Macro(expr_macro) => {
+                self.add_triple(&expr_id, ":type", ":MacroInvocation");
+                self.add_triple(&expr_id, ":macro_path", &format!("\"{}\"", quote!{#expr_macro.mac.path}));
+                self.add_triple(&expr_id, ":macro_args", &format!("\"{}\"", quote!{#expr_macro.mac.tokens}));
+            }
+            Expr::Path(expr_path) => {
+                self.add_triple(&expr_id, ":type", ":PathExpr");
+                self.add_triple(&expr_id, ":path", &format!("\"{}\"", quote!{#expr_path.path}));
+            }
+            Expr::Lit(expr_lit) => {
+                self.add_triple(&expr_id, ":type", ":LiteralExpr");
+                self.add_triple(&expr_id, ":value", &format!("\"{}\"", quote!{#expr_lit.lit}));
+            }
+            Expr::Call(expr_call) => {
+                self.add_triple(&expr_id, ":type", ":CallExpr");
+                if let Some(func_id) = self.flatten_expr(&expr_call.func, counter) {
+                    self.add_triple(&expr_id, ":function", &func_id);
+                }
+                for (idx, arg) in expr_call.args.iter().enumerate() {
+                    if let Some(arg_id) = self.flatten_expr(arg, counter) {
+                        self.add_triple(&expr_id, &format!(":arg_{{}}", idx), &arg_id);
+                    }
+                }
+            }
+            Expr::MethodCall(expr_method_call) => {
+                self.add_triple(&expr_id, ":type", ":MethodCallExpr");
+                self.add_triple(&expr_id, ":method_name", &format!("\"{}\"", expr_method_call.method));
+                if let Some(receiver_id) = self.flatten_expr(&expr_method_call.receiver, counter) {
+                    self.add_triple(&expr_id, ":receiver", &receiver_id);
+                }
+                for (idx, arg) in expr_method_call.args.iter().enumerate() {
+                    if let Some(arg_id) = self.flatten_expr(arg, counter) {
+                        self.add_triple(&expr_id, &format!(":arg_{{}}", idx), &arg_id);
+                    }
+                }
+            }
+            // Handle other expression types as needed for more comprehensive AST flattening
+            _ => {
+                self.add_triple(&expr_id, ":type", ":OtherExpr");
+                self.add_triple(&expr_id, ":debug_str", &format!("\"{}\"", quote!{#expr}));
+            }
+        }
+        Some(expr_id)
+    }
+
     
     pub fn add_triple(&mut self, subject: &str, predicate: &str, object: &str) {
         let idx = self.triples.len();
@@ -235,7 +344,7 @@ impl GrastDb {
             fs::create_dir_all(&node_dir)?;
             
             // Each predicate becomes a file in the node directory
-            let pred_file = node_dir.join(format!("{}.txt", triple.predicate.trim_start_matches(':'))); 
+            let pred_file = node_dir.join(format!("{}.txt", triple.predicate.trim_start_matches(':')))); 
             fs::write(pred_file, &triple.object)?;
         }
         
