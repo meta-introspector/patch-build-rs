@@ -13,6 +13,27 @@ mod mev_protection;
 mod event_memory;
 mod graph_partition;
 mod context_knapsack;
+mod zk_proof;
+
+#[proc_macro]
+pub fn zk_witness(input: TokenStream) -> TokenStream {
+    zk_proof::zk_witness_impl(input)
+}
+
+#[proc_macro]
+pub fn plonk_circuit(input: TokenStream) -> TokenStream {
+    zk_proof::plonk_circuit_impl(input)
+}
+
+#[proc_macro]
+pub fn stark_proof(input: TokenStream) -> TokenStream {
+    zk_proof::stark_proof_impl(input)
+}
+
+#[proc_macro]
+pub fn snark_verify(input: TokenStream) -> TokenStream {
+    zk_proof::snark_verify_impl(input)
+}
 
 #[proc_macro]
 pub fn backpack_fill(input: TokenStream) -> TokenStream {

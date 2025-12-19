@@ -139,6 +139,29 @@ mod tests {
     }
 
     #[test]
+    fn test_zk_proof_system() {
+        // Test zero-knowledge witness generation
+        let witness = zk_witness!("rustc_driver,rustc_middle,rustc_ast");
+        assert!(witness.contains("GraphWitness"));
+        assert!(witness.contains("verify_morphism"));
+        
+        // Test PLONK circuit generation
+        let circuit = plonk_circuit!("morphism_test");
+        assert!(circuit.contains("RustcMorphismCircuit"));
+        assert!(circuit.contains("constraint_system"));
+        
+        // Test STARK proof generation
+        let stark = stark_proof!("step0,step1,step2");
+        assert!(stark.contains("RustcSTARK"));
+        assert!(stark.contains("execution_trace"));
+        
+        // Test SNARK verification
+        let proof_data = "ZKProof{witness_hash:123, public_hash:456}";
+        let verifier = snark_verify!(proof_data);
+        assert!(verifier.contains("MorphismVerifier"));
+    }
+
+    #[test]
     fn test_atomic_swap_protection() {
         // Test MEV-protected atomic swaps
         let swap = atomic_swap!("slippage=0.5%,mev_protection=true");
