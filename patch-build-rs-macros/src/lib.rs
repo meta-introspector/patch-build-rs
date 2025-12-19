@@ -28,6 +28,17 @@ mod real_data_analysis;
 mod mkbuildrs;
 mod macro_lattice;
 mod repo_analysis;
+mod macro_generator;
+
+#[proc_macro]
+pub fn generate_common_macros(input: TokenStream) -> TokenStream {
+    macro_generator::generate_common_macros_impl(input)
+}
+
+#[proc_macro]
+pub fn mkbuildrs_with_macros(input: TokenStream) -> TokenStream {
+    macro_generator::mkbuildrs_with_macros_impl(input)
+}
 
 #[proc_macro]
 pub fn repo_duplicate_analysis(input: TokenStream) -> TokenStream {

@@ -1,0 +1,9 @@
+# Generated Macros Directory
+
+Auto-generated utility macros for common subexpressions:
+
+- common_macros.rs - Utility macros for the top 10 duplicate patterns
+- enhanced_build.rs - Build system using the generated macros
+- demo_usage.rs - Examples of how to use the generated macros
+
+These macros eliminate duplicate code by parameterizing the most common subexpressions found in our repository analysis.
