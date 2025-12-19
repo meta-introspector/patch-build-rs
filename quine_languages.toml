@@ -1,0 +1,55 @@
+# 128-Language Quine Relay Configuration
+
+[languages.rust]
+name = "rust"
+extension = "rs"
+compiler = "rustc"
+quine = '''fn main(){print!("fn main(){{print!(\"{}\");}}","fn main(){print!(\"fn main(){{print!(\\\"fn main(){{print!(\\\\\\\"{}\\\\\\\");}}\\\")}}\\\");}}\")}}");}'''
+
+[languages.c]
+name = "c"
+extension = "c"
+compiler = "gcc"
+quine = '''#include<stdio.h>
+int main(){char*s="#include<stdio.h>%cint main(){char*s=%c%s%c;printf(s,10,34,s,34,10);return 0;}%c";printf(s,10,34,s,34,10);return 0;}'''
+
+[languages.python]
+name = "python"
+extension = "py"
+compiler = "python"
+quine = '''s='s=%r;print(s%%s)';print(s%s)'''
+
+[languages.javascript]
+name = "javascript"
+extension = "js"
+compiler = "node"
+quine = '''(function(){var s='(function(){var s=%s;console.log(s.replace(/%s/g,JSON.stringify(s)))})()';console.log(s.replace(/%s/g,JSON.stringify(s)))})()'''
+
+[languages.haskell]
+name = "haskell"
+extension = "hs"
+compiler = "ghc"
+quine = '''main=putStr$s++show s where s="main=putStr$s++show s where s="'''
+
+[languages.scheme]
+name = "scheme"
+extension = "scm"
+compiler = "mit-scheme"
+quine = '''((lambda (x) `(,x ',x)) '(lambda (x) `(,x ',x)))'''
+
+[languages.lean4]
+name = "lean4"
+extension = "lean"
+compiler = "lean"
+quine = '''#eval s!"theorem quine : String := sorry"'''
+
+[languages.cpp]
+name = "cpp"
+extension = "cpp"
+compiler = "g++"
+quine = '''#include<iostream>
+int main(){char*s="#include<iostream>%cint main(){char*s=%c%s%c;std::cout<<s<<std::endl;return 0;}%c";std::cout<<s<<std::endl;return 0;}'''
+
+[bootstrap]
+chain = ["mes", "tinycc", "gcc", "llvm", "rustc"]
+cycle_complete = true

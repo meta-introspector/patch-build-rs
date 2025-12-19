@@ -17,6 +17,27 @@ mod zk_proof;
 mod lean4_proof;
 mod lean4_json;
 mod lean4_mirror;
+mod quine_relay;
+
+#[proc_macro]
+pub fn language_quine(input: TokenStream) -> TokenStream {
+    quine_relay::language_quine_impl(input)
+}
+
+#[proc_macro]
+pub fn compiler_macro(input: TokenStream) -> TokenStream {
+    quine_relay::compiler_macro_impl(input)
+}
+
+#[proc_macro]
+pub fn bootstrap_cycle(input: TokenStream) -> TokenStream {
+    quine_relay::bootstrap_cycle_impl(input)
+}
+
+#[proc_macro]
+pub fn automorphic_orbit(input: TokenStream) -> TokenStream {
+    quine_relay::automorphic_orbit_impl(input)
+}
 
 #[proc_macro]
 pub fn lean4_to_rust(input: TokenStream) -> TokenStream {

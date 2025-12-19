@@ -1,0 +1,11 @@
+# Gödelian Braid Directory
+
+Components of the 128-language automorphic orbit:
+
+- language_quines.rs - Quines for 8 core languages
+- compiler_macros.rs - Bootstrap compiler macros
+- bootstrap_cycle.rs - MES → TinyCC → GCC → LLVM → Rustc cycle
+- automorphic_orbit.rs - Complete 128-language orbit system
+- goedelian_test.rs - Complete braid system test
+
+Braid[emojis,text,rust,lean4,math] = Self-referential mathematical universe
