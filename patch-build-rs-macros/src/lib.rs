@@ -20,6 +20,38 @@ mod lean4_mirror;
 mod quine_relay;
 mod emoji_poetry;
 mod rust_eigenmatrix;
+mod real_rustc_analysis;
+mod rustc_tracer;
+
+#[proc_macro]
+pub fn trace_rustc(input: TokenStream) -> TokenStream {
+    rustc_tracer::trace_rustc_impl(input)
+}
+
+#[proc_macro]
+pub fn custom_rust_driver(input: TokenStream) -> TokenStream {
+    rustc_tracer::custom_rust_driver_impl(input)
+}
+
+#[proc_macro]
+pub fn auto_source_setup(input: TokenStream) -> TokenStream {
+    rustc_tracer::auto_source_setup_impl(input)
+}
+
+#[proc_macro]
+pub fn find_rustc_source(input: TokenStream) -> TokenStream {
+    real_rustc_analysis::find_rustc_source_impl(input)
+}
+
+#[proc_macro]
+pub fn analyze_real_source(input: TokenStream) -> TokenStream {
+    real_rustc_analysis::analyze_real_source_impl(input)
+}
+
+#[proc_macro]
+pub fn prove_eigenvalues(input: TokenStream) -> TokenStream {
+    real_rustc_analysis::prove_eigenvalues_impl(input)
+}
 
 #[proc_macro]
 pub fn rust_eigenmatrix(input: TokenStream) -> TokenStream {

@@ -1,0 +1,10 @@
+# Rustc Analysis Directory
+
+Complete rustc source analysis components:
+
+- rustc_trace_report.txt - Binary path tracing and source detection
+- custom_rust_driver.sh - Automated rustc analysis pipeline  
+- source_setup.rs - Automatic source download and management
+- real_eigenmatrix.md - Eigenmatrix derived from real source
+
+All analysis based on real rustc source code, no mock data.
