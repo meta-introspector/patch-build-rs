@@ -1,0 +1,9 @@
+# Rust Eigenforms Directory
+
+Mathematical eigenform representations of Rust:
+
+- rust_19_eigenmatrix.md - Complete 16×16 emoji eigenmatrix
+- emoji_source_mapping.txt - Source code → emoji conversion
+- eigenform_verification.txt - Mathematical verification report
+
+The eigenmatrix captures the mathematical DNA of Rust as dense emoji symbols, with eigenvalues representing the fundamental concepts of the language.

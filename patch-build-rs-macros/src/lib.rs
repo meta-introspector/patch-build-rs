@@ -19,6 +19,22 @@ mod lean4_json;
 mod lean4_mirror;
 mod quine_relay;
 mod emoji_poetry;
+mod rust_eigenmatrix;
+
+#[proc_macro]
+pub fn rust_eigenmatrix(input: TokenStream) -> TokenStream {
+    rust_eigenmatrix::rust_eigenmatrix_impl(input)
+}
+
+#[proc_macro]
+pub fn source_to_emoji(input: TokenStream) -> TokenStream {
+    rust_eigenmatrix::source_to_emoji_impl(input)
+}
+
+#[proc_macro]
+pub fn eigenform_verify(input: TokenStream) -> TokenStream {
+    rust_eigenmatrix::eigenform_verify_impl(input)
+}
 
 #[proc_macro]
 pub fn emoji_poem(input: TokenStream) -> TokenStream {
