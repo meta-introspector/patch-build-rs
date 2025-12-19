@@ -1,0 +1,11 @@
+# Lean4 Formal Proofs Directory
+
+This directory contains the generated Lean4 formal proofs:
+
+- RustcMonsterUnity.lean - Main morphism theorem
+- RustcToLean4.lean - Rust→Lean4 translation  
+- MonsterCorrespondence.lean - Monster group proof
+- LFunctionUnity.lean - L-function unity proof
+- FormalVerification.lean - Complete verification suite
+
+Run `lake build` to verify all proofs.

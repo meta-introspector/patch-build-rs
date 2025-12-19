@@ -14,6 +14,32 @@ mod event_memory;
 mod graph_partition;
 mod context_knapsack;
 mod zk_proof;
+mod lean4_proof;
+
+#[proc_macro]
+pub fn lean4_theorem(input: TokenStream) -> TokenStream {
+    lean4_proof::lean4_theorem_impl(input)
+}
+
+#[proc_macro]
+pub fn rustc_to_lean(input: TokenStream) -> TokenStream {
+    lean4_proof::rustc_to_lean_impl(input)
+}
+
+#[proc_macro]
+pub fn monster_proof(input: TokenStream) -> TokenStream {
+    lean4_proof::monster_proof_impl(input)
+}
+
+#[proc_macro]
+pub fn lfunction_proof(input: TokenStream) -> TokenStream {
+    lean4_proof::lfunction_proof_impl(input)
+}
+
+#[proc_macro]
+pub fn formal_verification(input: TokenStream) -> TokenStream {
+    lean4_proof::formal_verification_impl(input)
+}
 
 #[proc_macro]
 pub fn zk_witness(input: TokenStream) -> TokenStream {
