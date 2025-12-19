@@ -1,0 +1,9 @@
+# Checked Templates Directory
+
+Syntax-validated template code generated with compile-time checking:
+
+- validated_macros.rs - Common utility macros with syntax validation
+- validated_build.rs - Build system template with syntax checking
+- demo_usage.rs - Examples of using checktemplate! macro
+
+All templates are validated at compile time using syn::parse_str to ensure syntactic correctness before code generation.

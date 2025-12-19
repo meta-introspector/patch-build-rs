@@ -29,6 +29,22 @@ mod mkbuildrs;
 mod macro_lattice;
 mod repo_analysis;
 mod macro_generator;
+mod template_checker;
+
+#[proc_macro]
+pub fn checktemplate(input: TokenStream) -> TokenStream {
+    template_checker::checktemplate_impl(input)
+}
+
+#[proc_macro]
+pub fn generate_checked_macros(input: TokenStream) -> TokenStream {
+    template_checker::generate_checked_macros_impl(input)
+}
+
+#[proc_macro]
+pub fn mkbuildrs_checked(input: TokenStream) -> TokenStream {
+    template_checker::mkbuildrs_checked_impl(input)
+}
 
 #[proc_macro]
 pub fn generate_common_macros(input: TokenStream) -> TokenStream {
