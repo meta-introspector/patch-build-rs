@@ -1,6 +1,7 @@
 use std::env;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process;
+use walkdir::WalkDir; // Add walkdir import
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -11,66 +12,83 @@ fn main() {
     }
     
     let command = &args[1];
+    let mut path_arg: Option<&str> = None;
+    let mut dry_run = false;
+    let mut recursive = false;
+
+    // Parse global options and subcommand arguments
+    let mut i = 2;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--dry-run" | "-n" => dry_run = true,
+            "--recursive" | "-r" => recursive = true,
+            _ => {
+                if path_arg.is_none() {
+                    path_arg = Some(&args[i]);
+                } else {
+                    // This command already has a path, so this must be an unknown argument
+                    eprintln!("Error: Unexpected argument '{}'", args[i]);
+                    print_usage(&args[0]);
+                    process::exit(1);
+                }
+            }
+        }
+        i += 1;
+    }
+
+    let current_path = path_arg.unwrap_or(".");
     
     match command.as_str() {
         "scan" => {
-            let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
-            cmd_scan(path);
+            cmd_scan(current_path);
         }
         "preview" => {
-            if args.len() < 3 {
+            if path_arg.is_none() {
                 eprintln!("Error: preview requires a file path");
                 process::exit(1);
             }
-            cmd_preview(&args[2]);
+            cmd_preview(current_path);
         }
         "fix" => {
-            let path = args.get(2).map(|s| s.as_str()).unwrap_or(".");
-            let dry_run = args.iter().any(|a| a == "--dry-run" || a == "-n");
-            cmd_fix(path, dry_run);
+            cmd_fix(current_path, dry_run);
         }
         "diff" => {
-            if args.len() < 3 {
+            if path_arg.is_none() {
                 eprintln!("Error: diff requires a file path");
                 process::exit(1);
             }
-            cmd_diff(&args[2]);
+            cmd_diff(current_path);
         }
         "tickets" => {
-            let filter = args.get(2).map(|s| s.as_str());
+            let filter = path_arg.map(|s| s.as_str());
             cmd_tickets(filter);
         }
         "ticket" => {
-            if args.len() < 3 {
+            if path_arg.is_none() {
                 eprintln!("Error: ticket requires a ticket ID");
                 process::exit(1);
             }
-            cmd_ticket(&args[2]);
+            cmd_ticket(current_path);
         }
         "report" => {
             cmd_report();
         }
         "decl-scan" => {
-            if args.len() < 3 {
+            if path_arg.is_none() {
                 eprintln!("Error: decl-scan requires a file path");
                 process::exit(1);
             }
-            cmd_decl_scan(&args[2]);
+            cmd_decl_scan(current_path);
         }
         "decl-wrap" => {
-            if args.len() < 3 {
-                eprintln!("Error: decl-wrap requires a file path");
-                process::exit(1);
-            }
-            let dry_run = args.iter().any(|a| a == "--dry-run" || a == "-n");
-            cmd_decl_wrap(&args[2], dry_run);
+            cmd_decl_wrap(current_path, dry_run, recursive);
         }
         "decl-json" => {
-            if args.len() < 3 {
+            if path_arg.is_none() {
                 eprintln!("Error: decl-json requires a file path");
                 process::exit(1);
             }
-            cmd_decl_json(&args[2]);
+            cmd_decl_json(current_path);
         }
         "help" | "--help" | "-h" => {
             print_usage(&args[0]);
@@ -84,11 +102,12 @@ fn main() {
 }
 
 fn print_usage(program: &str) {
-    eprintln!(r#"
-🔧 Audit Fix Tool - Automatic audit_id! and decl! injection
+    eprintln!(
+r#"#,
+"🔧 Audit Fix Tool - Automatic audit_id! and decl! injection
 
 USAGE:
-    {} <COMMAND> [OPTIONS]
+    {} <COMMAND> [PATH] [OPTIONS] 
 
 AUDIT COMMANDS:
     scan [DIR]          Scan directory for audit issues (default: current dir)
@@ -101,11 +120,12 @@ AUDIT COMMANDS:
 
 DECLARATION COMMANDS:
     decl-scan <FILE>    Scan file for public declarations and show metadata
-    decl-wrap <FILE> [--dry-run]  Wrap public declarations with #[decl(...)]
+    decl-wrap [PATH] [--dry-run] [--recursive]  Wrap public declarations with #[decl(...)]
     decl-json <FILE>    Export declarations as JSON
 
 OPTIONS:
     --dry-run, -n       Show what would be fixed without changing files
+    --recursive, -r     Apply command recursively to all .rs files in a directory
     --help, -h          Show this help message
 
 EXAMPLES:
@@ -114,8 +134,9 @@ EXAMPLES:
     {} fix src/ --dry-run
     {} decl-scan src/lib.rs
     {} decl-wrap src/lib.rs --dry-run
+    {} decl-wrap . --recursive
     {} decl-json src/lib.rs > decls.json
-"#, program, program, program, program, program, program, program);
+"#, program, program, program, program, program, program, program, program);
 }
 
 fn cmd_scan(path: &str) {
@@ -216,23 +237,63 @@ fn cmd_decl_scan(path: &str) {
     println!("{}", preview);
 }
 
-fn cmd_decl_wrap(path: &str, dry_run: bool) {
-    let path = Path::new(path);
-    
-    if dry_run {
-        let preview = introspector_core::preview_decl_wrappers(path);
-        println!("{}", preview);
-        eprintln!("🔍 Dry run - no changes made");
+fn cmd_decl_wrap(root_path: &str, dry_run: bool, recursive: bool) {
+    let path = PathBuf::from(root_path);
+    let mut files_processed = 0;
+
+    if recursive {
+        if !path.is_dir() {
+            eprintln!("Error: --recursive can only be used with a directory path.");
+            process::exit(1);
+        }
+        eprintln!("🔍 {} recursively in {}...\n", if dry_run { "Previewing" } else { "Wrapping" }, path.display());
+        for entry in WalkDir::new(&path)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| e.file_type().is_file() && e.path().extension().map_or(false, |ext| ext == "rs"))
+        {
+            let file_path = entry.path();
+            if dry_run {
+                let preview = introspector_core::preview_decl_wrappers(file_path);
+                println!("{}", preview);
+            } else {
+                match introspector_core::apply_decl_wrappers(file_path) {
+                    Ok(count) => {
+                        eprintln!("✅ Wrapped {} public declarations in {}", count, file_path.display());
+                        files_processed += 1;
+                    }
+                    Err(e) => {
+                        eprintln!("❌ Error wrapping {}: {}", file_path.display(), e);
+                    }
+                }
+            }
+        }
+        if dry_run {
+            eprintln!("🔍 Dry run - no changes made across {} files", files_processed);
+        } else {
+            eprintln!("✅ Completed wrapping declarations in {} files", files_processed);
+        }
     } else {
-        match introspector_core::apply_decl_wrappers(path) {
-            Ok(count) => eprintln!("✅ Wrapped {} public declarations in {}", count, path.display()),
-            Err(e) => {
-                eprintln!("❌ Error: {}", e);
-                process::exit(1);
+        if !path.is_file() {
+            eprintln!("Error: {} is not a file. Use --recursive for directories.", path.display());
+            process::exit(1);
+        }
+        if dry_run {
+            let preview = introspector_core::preview_decl_wrappers(&path);
+            println!("{}", preview);
+            eprintln!("🔍 Dry run - no changes made");
+        } else {
+            match introspector_core::apply_decl_wrappers(&path) {
+                Ok(count) => eprintln!("✅ Wrapped {} public declarations in {}", count, path.display()),
+                Err(e) => {
+                    eprintln!("❌ Error: {}", e);
+                    process::exit(1);
+                }
             }
         }
     }
 }
+
 
 fn cmd_decl_json(path: &str) {
     let path = Path::new(path);
