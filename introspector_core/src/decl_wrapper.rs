@@ -517,8 +517,8 @@ pub fn wrap_public_declarations(content: &str) -> Vec<WrapAction> {
     let mut actions = Vec::new();
     
     for decl in decls {
-        // Only wrap public declarations
-        if decl.visibility != VisibilityKind::Public {
+        // Only wrap public declarations and skip module declarations for now
+        if decl.visibility != VisibilityKind::Public || decl.node_type == NodeType::Module {
             continue;
         }
         

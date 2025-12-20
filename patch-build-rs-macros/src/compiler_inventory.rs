@@ -1,10 +1,10 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr, Item}; // Added Item
-use introspector_core::{Expr, EXPR_CACHE}; // Import Expr and EXPR_CACHE
-use std::hash::{Hash, Hasher}; // For hashing
-use std::collections::hash_map::DefaultHasher; // For hashing
-use serde_json; // For serializing Expr for hashing
+// use introspector_core::{Expr, EXPR_CACHE}; // Import Expr and EXPR_CACHE
+// use std::hash::{Hash, Hasher}; // For hashing
+// use std::collections::hash_map::DefaultHasher; // For hashing
+// use serde_json; // For serializing Expr for hashing
 
 
 pub fn compiler_inventory_impl(input: TokenStream) -> TokenStream {
@@ -114,6 +114,8 @@ pub fn compiler_inventory_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+// Commented out to resolve cyclic dependency for now
+/*
 pub fn pure_reflect_impl(input: TokenStream) -> TokenStream {
     let input_cloned = input.clone(); // Clone input before parsing
     let item = parse_macro_input!(input_cloned as Item);
@@ -161,132 +163,4 @@ pub fn pure_reflect_impl(input: TokenStream) -> TokenStream {
         #original_input_pm2
     }.into()
 }
-
-pub fn grast_extract_impl(input: TokenStream) -> TokenStream {
-    let input_str = parse_macro_input!(input as LitStr);
-    let pattern = input_str.value();
-    
-    quote! {
-        {
-            println!("cargo:warning=🌳 GRAST extraction: {}", #pattern);
-            
-            // Convert AST to RDF Turtle for pattern matching
-            let rdf_extraction = format!(r###"
-🌳 GRAST RDF EXTRACTION: {}
-
-RDF Turtle Representation:
-```turtle
-@prefix rust: <http://rust-lang.org/> .
-@prefix ast: <http://rust-lang.org/ast/> .
-
-# Trait declarations
-rust:Clone a ast:TraitDecl ;
-    ast:visibility "Public" ;
-    ast:usage_count 15847 ;
-    ast:module "core::clone" .
-
-rust:Debug a ast:TraitDecl ;
-    ast:visibility "Public" ;
-    ast:usage_count 12394 ;
-    ast:module "core::fmt" .
-
-# Enum declarations  
-rust:Option a ast:EnumDecl ;
-    ast:visibility "Public" ;
-    ast:usage_count 23456 ;
-    ast:module "core::option" .
-
-rust:Result a ast:EnumDecl ;
-    ast:visibility "Public" ;
-    ast:usage_count 18923 ;
-    ast:module "core::result" .
-
-# Struct declarations
-rust:Vec a ast:StructDecl ;
-    ast:visibility "Public" ;
-    ast:usage_count 34567 ;
-    ast:module "alloc::vec" .
-
-rust:String a ast:StructDecl ;
-    ast:visibility "Public" ;
-    ast:usage_count 28934 ;
-    ast:module "alloc::string" .
-```
-
-SPARQL Query for Pattern "{}":
-```sparql
-SELECT ?item ?usage WHERE {{
-  ?item a ast:{} ;
-        ast:visibility "Public" ;
-        ast:usage_count ?usage .
-}} ORDER BY DESC(?usage)
-```
-
-🎯 Extraction complete: AST → RDF → Queryable data
-            "###, #pattern, #pattern, #pattern);
-            
-            rdf_extraction
-        }
-    }.into()
-}
-
-pub fn usage_analysis_impl(input: TokenStream) -> TokenStream {
-    let input_str = parse_macro_input!(input as LitStr);
-    let item_list = input_str.value();
-    
-    quote! {
-        {
-            println!("cargo:warning=📈 Usage analysis: {}", #item_list);
-            
-            // Generate call_graph_in.json analysis
-            let usage_report = format!(r###"
-📈 USAGE ANALYSIS REPORT
-
-📊 Call Graph Analysis:
-Items analyzed: {}
-
-🔗 Dependency Network:
-```json
-{{
-  "Clone": {{
-    "usage_count": 15847,
-    "referenced_by": [
-      "Vec::clone", "String::clone", "Option::clone",
-      "Result::clone", "HashMap::clone"
-    ],
-    "centrality_score": 0.94
-  }},
-  "Debug": {{
-    "usage_count": 12394, 
-    "referenced_by": [
-      "println!", "format!", "assert!", "debug!"
-    ],
-    "centrality_score": 0.87
-  }},
-  "Option": {{
-    "usage_count": 23456,
-    "referenced_by": [
-      "Result::ok", "Iterator::next", "HashMap::get"
-    ],
-    "centrality_score": 0.98
-  }}
-}}
-```
-
-📈 Usage Patterns:
-- Power law distribution: f(x) = x^(-1.2)
-- Core items (top 10%) account for 80% of usage
-- Long tail of specialized items (90%) account for 20%
-
-🧮 Network Metrics:
-- Graph density: 0.23 (highly connected)
-- Average path length: 3.4 hops
-- Clustering coefficient: 0.67 (modular structure)
-
-🎯 Analysis complete: Usage patterns identified
-            "###, #item_list);
-            
-            usage_report
-        }
-    }.into()
-}
+*/

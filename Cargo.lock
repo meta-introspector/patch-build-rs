@@ -927,14 +927,23 @@ dependencies = [
 name = "introspector_core"
 version = "0.1.0"
 dependencies = [
+ "introspector_decl_common",
  "lru",
  "once_cell",
+ "patch-build-rs-macros",
  "proc-macro2",
  "quote",
  "regex",
  "serde",
  "serde_json",
  "syn 2.0.111",
+]
+
+[[package]]
+name = "introspector_decl_common"
+version = "0.1.0"
+dependencies = [
+ "once_cell",
 ]
 
 [[package]]
@@ -1208,7 +1217,7 @@ name = "patch-build-rs-macros"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "introspector_core",
+ "introspector_decl_common",
  "once_cell",
  "proc-macro2",
  "quote",
@@ -1689,7 +1698,7 @@ dependencies = [
  "rustsat-batsat",
  "serde",
  "serde_json",
- "syn 1.0.109",
+ "syn 2.0.111",
 ]
 
 [[package]]
@@ -1736,7 +1745,7 @@ version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.111",
 ]
 
 [[package]]

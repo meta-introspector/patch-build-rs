@@ -17,7 +17,7 @@ serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true } # Already present
 walkdir = { workspace = true }
 once_cell = { workspace = true }
-introspector_core = { workspace = true }
+introspector_decl_common = { path = "../introspector_decl_common" }
 reqwest = { workspace = true, optional = true, features = ["blocking", "json"] }
 semver = { workspace = true, optional = true } # Add semver
 

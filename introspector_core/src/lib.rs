@@ -34,10 +34,12 @@ pub use auto_fix::{
     apply_fixes_to_file_in_place, preview_fixes, generate_diff,
     scan_directory, print_scan_summary, apply_all_fixes,
 };
-pub use decl_macro::{
+pub use introspector_decl_common::{
     DeclInfo, DeclRegistry, DECL_REGISTRY,
     register_decl, get_all_declarations, get_declarations_by_type,
     get_declarations_by_module, get_declaration_by_hash,
+};
+pub use decl_macro::{
     print_declaration_summary, generate_rdf_declarations,
 };
 pub use decl_wrapper::{
@@ -61,4 +63,3 @@ pub use expr::Expr;
 pub use pureprogram::PureProgram;
 pub use new_quote_trait::NewQuoteTrait;
 pub use expr_cache::EXPR_CACHE;
-

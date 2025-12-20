@@ -4,6 +4,7 @@ use syn::{
     parse_macro_input, parse_quote, ItemFn, ItemStruct, ItemEnum, ItemTrait,
     ItemConst, ItemType, Attribute, Meta, MetaList, Lit, Ident,
 };
+use introspector_decl_common::{DeclInfo, register_decl};
 
 pub fn decl_attr_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item_clone = item.clone();
@@ -99,36 +100,29 @@ fn wrap_function(args: &DeclArgs, item: &mut ItemFn) -> TokenStream {
         syn::Visibility::Restricted(_) => "pub(restricted)",
         syn::Visibility::Inherited => "private",
     };
+
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
     
-    let params: Vec<String> = item.sig.inputs.iter().map(|arg| {
-        arg.to_token_stream().to_string()
-    }).collect();
-    let params_str = params.join(", ");
-    
-    let return_type = match &item.sig.output {
-        syn::ReturnType::Default => "()".to_string(),
-        syn::ReturnType::Type(_, ty) => ty.to_token_stream().to_string(),
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            use introspector_decl_common::{DeclInfo, register_decl};
+            register_decl(DeclInfo {
+                node_type: "fn",
+                name: #name,
+                visibility: #vis_str,
+                module: #module_path_str,
+                file: file!(), // Use file!() from the context where the macro is expanded
+                line: #line,
+                hash: #hash,
+            });
+        };
     };
-    
-    // Generate the registration code
-    let name_lit = syn::LitStr::new(&name, proc_macro2::Span::call_site());
-    let hash_lit = syn::LitStr::new(&hash, proc_macro2::Span::call_site());
-    let vis_lit = syn::LitStr::new(vis_str, proc_macro2::Span::call_site());
-    let params_lit = syn::LitStr::new(&params_str, proc_macro2::Span::call_site());
-    let ret_lit = syn::LitStr::new(&return_type, proc_macro2::Span::call_site());
     
     let output = quote! {
         #item
-        
-        // Auto-generated declaration registration
-        const _: () = {
-            #[allow(non_upper_case_globals)]
-            #[doc(hidden)]
-            #[link_section = ".decl_registry"]
-            static __DECL_REG: &[u8] = concat!(
-                "DECL:fn:", #name_lit, ":", #vis_lit, ":", #hash_lit, ":", #params_lit, " -> ", #ret_lit
-            ).as_bytes();
-        };
+        #registration_code
     };
     
     output.into()
@@ -143,29 +137,29 @@ fn wrap_struct(args: &DeclArgs, item: &mut ItemStruct) -> TokenStream {
         syn::Visibility::Restricted(_) => "pub(restricted)",
         syn::Visibility::Inherited => "private",
     };
+
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
     
-    let field_count = match &item.fields {
-        syn::Fields::Named(f) => f.named.len(),
-        syn::Fields::Unnamed(f) => f.unnamed.len(),
-        syn::Fields::Unit => 0,
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            use introspector_decl_common::{DeclInfo, register_decl};
+            register_decl(DeclInfo {
+                node_type: "struct",
+                name: #name,
+                visibility: #vis_str,
+                module: #module_path_str,
+                file: file!(), // Use file!() from the context where the macro is expanded
+                line: #line,
+                hash: #hash,
+            });
+        };
     };
-    
-    let name_lit = syn::LitStr::new(&name, proc_macro2::Span::call_site());
-    let hash_lit = syn::LitStr::new(&hash, proc_macro2::Span::call_site());
-    let vis_lit = syn::LitStr::new(vis_str, proc_macro2::Span::call_site());
-    let fields_lit = syn::LitStr::new(&field_count.to_string(), proc_macro2::Span::call_site());
     
     let output = quote! {
         #item
-        
-        const _: () = {
-            #[allow(non_upper_case_globals)]
-            #[doc(hidden)]
-            #[link_section = ".decl_registry"]
-            static __DECL_REG: &[u8] = concat!(
-                "DECL:struct:", #name_lit, ":", #vis_lit, ":", #hash_lit, ":fields=", #fields_lit
-            ).as_bytes();
-        };
+        #registration_code
     };
     
     output.into()
@@ -181,27 +175,28 @@ fn wrap_enum(args: &DeclArgs, item: &mut ItemEnum) -> TokenStream {
         syn::Visibility::Inherited => "private",
     };
     
-    let variants: Vec<String> = item.variants.iter()
-        .map(|v| v.ident.to_string())
-        .collect();
-    let variants_str = variants.join(",");
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
     
-    let name_lit = syn::LitStr::new(&name, proc_macro2::Span::call_site());
-    let hash_lit = syn::LitStr::new(&hash, proc_macro2::Span::call_site());
-    let vis_lit = syn::LitStr::new(vis_str, proc_macro2::Span::call_site());
-    let variants_lit = syn::LitStr::new(&variants_str, proc_macro2::Span::call_site());
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            use introspector_decl_common::{DeclInfo, register_decl};
+            register_decl(DeclInfo {
+                node_type: "enum",
+                name: #name,
+                visibility: #vis_str,
+                module: #module_path_str,
+                file: file!(), // Use file!() from the context where the macro is expanded
+                line: #line,
+                hash: #hash,
+            });
+        };
+    };
     
     let output = quote! {
         #item
-        
-        const _: () = {
-            #[allow(non_upper_case_globals)]
-            #[doc(hidden)]
-            #[link_section = ".decl_registry"]
-            static __DECL_REG: &[u8] = concat!(
-                "DECL:enum:", #name_lit, ":", #vis_lit, ":", #hash_lit, ":variants=", #variants_lit
-            ).as_bytes();
-        };
+        #registration_code
     };
     
     output.into()
@@ -217,33 +212,28 @@ fn wrap_trait(args: &DeclArgs, item: &mut ItemTrait) -> TokenStream {
         syn::Visibility::Inherited => "private",
     };
     
-    let methods: Vec<String> = item.items.iter()
-        .filter_map(|i| {
-            if let syn::TraitItem::Fn(m) = i {
-                Some(m.sig.ident.to_string())
-            } else {
-                None
-            }
-        })
-        .collect();
-    let methods_str = methods.join(",");
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
     
-    let name_lit = syn::LitStr::new(&name, proc_macro2::Span::call_site());
-    let hash_lit = syn::LitStr::new(&hash, proc_macro2::Span::call_site());
-    let vis_lit = syn::LitStr::new(vis_str, proc_macro2::Span::call_site());
-    let methods_lit = syn::LitStr::new(&methods_str, proc_macro2::Span::call_site());
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            use introspector_decl_common::{DeclInfo, register_decl};
+            register_decl(DeclInfo {
+                node_type: "trait",
+                name: #name,
+                visibility: #vis_str,
+                module: #module_path_str,
+                file: file!(), // Use file!() from the context where the macro is expanded
+                line: #line,
+                hash: #hash,
+            });
+        };
+    };
     
     let output = quote! {
         #item
-        
-        const _: () = {
-            #[allow(non_upper_case_globals)]
-            #[doc(hidden)]
-            #[link_section = ".decl_registry"]
-            static __DECL_REG: &[u8] = concat!(
-                "DECL:trait:", #name_lit, ":", #vis_lit, ":", #hash_lit, ":methods=", #methods_lit
-            ).as_bytes();
-        };
+        #registration_code
     };
     
     output.into()

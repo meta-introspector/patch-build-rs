@@ -12,7 +12,7 @@ members = [
     "code-finder", # New crate for demonstrating grep2code morphism
     "shebling_macros", # New crate for shebling! macro
     "solfun_macros", "test_macros_app", # New crate for fun and dev-ops macros
-    "introspector_core", # Core types for introspection
+    "introspector_core", "introspector_decl_common", # Core types for introspection
     # Eventually, we will add a binary crate here, e.g., "patch-build-cli"
 ]
 
@@ -34,6 +34,7 @@ patch-build-rs-macros = { path = "patch-build-rs-macros" }
 mkslop-macros = { path = "mkslop-macros" }
 nix2proc-macros = { path = "nix2proc-macros" }
 introspector_core = { path = "introspector_core" }
+introspector_decl_common = { path = "introspector_decl_common" }
 reqwest = "0.11" # Add reqwest to workspace dependencies
 semver = "1.0" # Add semver to workspace dependencies
 
