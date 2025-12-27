@@ -7,6 +7,7 @@ use introspector_core::Expr;
 // For now, assuming it's available or will be handled by lib.rs
 
 #[proc_macro]
+#[decl(fn, name = "rewriterustinrust", vis = "pub", hash = "e1a8edb0")]
 pub fn rewriterustinrust(input: TokenStream) -> TokenStream {
     // 1. Quoting Phase (Reflective Ascent) - Use pure_reflect internally to get the Expr
     let item = parse_macro_input!(input as Item);

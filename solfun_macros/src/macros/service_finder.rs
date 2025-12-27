@@ -1,8 +1,10 @@
 extern crate proc_macro;
+use patch_build_rs_macros::decl;
 use proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "service_finder_impl", vis = "pub", hash = "7dd619c4")]
 pub fn service_finder_impl(input: TokenStream) -> TokenStream {
     let need_description = parse_macro_input!(input as LitStr);
     let span = need_description.span();
@@ -15,4 +17,3 @@ pub fn service_finder_impl(input: TokenStream) -> TokenStream {
     }
     .into()
 }
-

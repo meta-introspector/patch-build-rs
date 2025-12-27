@@ -47,6 +47,7 @@ use crate::{CheckoutNotificationType, DiffFile, FileMode, Remote};
 ///     Path::new("/tmp/git2-rs"),
 ///   );
 /// ```
+#[decl(struct, name = "RepoBuilder", vis = "pub", hash = "fe1549ab")]
 pub struct RepoBuilder<'cb> {
     bare: bool,
     branch: Option<CString>,
@@ -61,6 +62,7 @@ pub struct RepoBuilder<'cb> {
 /// Type of callback passed to `RepoBuilder::remote_create`.
 ///
 /// The second and third arguments are the remote's name and the remote's URL.
+#[decl(type, name = "RemoteCreate", vis = "pub", hash = "915e697f")]
 pub type RemoteCreate<'cb> =
     dyn for<'a> FnMut(&'a Repository, &str, &str) -> Result<Remote<'a>, Error> + 'cb;
 
@@ -73,12 +75,14 @@ pub type RemoteCreate<'cb> =
 /// which is lower-level (and operates only on one level of the tree at a time).
 ///
 /// [`TreeBuilder`]: crate::TreeBuilder
+#[decl(struct, name = "TreeUpdateBuilder", vis = "pub", hash = "0cab9649")]
 pub struct TreeUpdateBuilder {
     updates: Vec<raw::git_tree_update>,
     paths: Vec<CString>,
 }
 
 /// A builder struct for configuring checkouts of a repository.
+#[decl(struct, name = "CheckoutBuilder", vis = "pub", hash = "8ce9a498")]
 pub struct CheckoutBuilder<'cb> {
     their_label: Option<CString>,
     our_label: Option<CString>,
@@ -99,6 +103,7 @@ pub struct CheckoutBuilder<'cb> {
 ///
 /// The first argument is the path for the notification, the next is the number
 /// of completed steps so far, and the final is the total number of steps.
+#[decl(type, name = "Progress", vis = "pub", hash = "795e5801")]
 pub type Progress<'a> = dyn FnMut(Option<&Path>, usize, usize) + 'a;
 
 /// Checkout notifications callback.
@@ -108,6 +113,7 @@ pub type Progress<'a> = dyn FnMut(Option<&Path>, usize, usize) + 'a;
 ///
 /// The callback must return a bool specifying whether the checkout should
 /// continue.
+#[decl(type, name = "Notify", vis = "pub", hash = "018afcaf")]
 pub type Notify<'a> = dyn FnMut(
         CheckoutNotificationType,
         Option<&Path>,
@@ -125,6 +131,7 @@ impl<'cb> Default for RepoBuilder<'cb> {
 
 /// Options that can be passed to `RepoBuilder::clone_local`.
 #[derive(Clone, Copy)]
+#[decl(enum, name = "CloneLocal", vis = "pub", hash = "3a305102")]
 pub enum CloneLocal {
     /// Auto-detect (default)
     ///

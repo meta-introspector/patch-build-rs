@@ -13,6 +13,7 @@ mkbuildrs! {
 }
 
 #[proc_macro]
+#[decl(fn, name = "pure_reflect", vis = "pub", hash = "2c06d7bb")]
 pub fn pure_reflect(input: TokenStream) -> TokenStream {
     let input_proc_macro2: proc_macro2::TokenStream = input.clone().into();
     let input_str = input_proc_macro2.to_string();
@@ -61,6 +62,7 @@ pub fn pure_reflect(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+#[decl(fn, name = "rewriterustinrust", vis = "pub", hash = "e1a8edb0")]
 pub fn rewriterustinrust(input: TokenStream) -> TokenStream {
     // 1. Quoting Phase (Reflective Ascent) - Use pure_reflect internally to get the Expr
     let item = parse_macro_input!(input as Item);
@@ -98,6 +100,7 @@ pub fn rewriterustinrust(input: TokenStream) -> TokenStream {
 }
 
 #[proc_macro]
+#[decl(fn, name = "commit_cache", vis = "pub", hash = "9d62a316")]
 pub fn commit_cache(input: TokenStream) -> TokenStream {
     let args = syn::punctuated::Punctuated::<LitStr, syn::Token![,]>::parse_terminated
         .parse(input)

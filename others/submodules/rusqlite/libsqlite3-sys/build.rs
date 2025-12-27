@@ -342,6 +342,7 @@ fn lib_name() -> &'static str {
     }
 }
 
+#[decl(enum, name = "HeaderLocation", vis = "pub", hash = "b62674a7")]
 pub enum HeaderLocation {
     FromEnvironment,
     Wrapper,

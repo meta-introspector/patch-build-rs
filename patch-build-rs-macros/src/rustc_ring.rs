@@ -9,7 +9,8 @@ use syn::{parse_macro_input, LitStr};
 // FKD-007: Static DOT graph (hardcoded example, not dynamically generated)
 // CON-002: Environment-dependent paths (/nix/store may fail on non-NixOS)
 // ═══════════════════════════════════════════════════════════════════════════════
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "analyze_rustc_ring_impl", vis = "pub", hash = "527680f7")]
 pub fn analyze_rustc_ring_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {
@@ -37,6 +38,7 @@ pub fn analyze_rustc_ring_impl(_input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "crate_report_impl", vis = "pub", hash = "1a2d2b26")]
 pub fn crate_report_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let crate_path = input_str.value();
@@ -70,6 +72,7 @@ pub fn crate_report_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "dependency_graph_impl", vis = "pub", hash = "c9ee9960")]
 pub fn dependency_graph_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {
@@ -109,6 +112,7 @@ digraph RustcRing {
     }.into()
 }
 
+#[decl2(fn, name = "ring_properties_impl", vis = "pub", hash = "09cc8e62")]
 pub fn ring_properties_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {

@@ -20,6 +20,7 @@ use rand::Rng;
 /// the `build_docs` feature.
 #[cfg_attr(docsrs, doc(cfg(feature = "build_docs")))]
 #[derive(Debug, Clone)]
+#[decl(struct, name = "MicrodescBuilder", vis = "pub", hash = "7fc1b271")]
 pub struct MicrodescBuilder {
     /// The ntor onion key we'll be using.
     ///

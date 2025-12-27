@@ -10,5 +10,6 @@ proc-macro = true
 syn = { workspace = true, features = ["full", "extra-traits"] }
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
+patch-build-rs-macros = { workspace = true }
 # Add any other specific dependencies needed for individual macros later.
 # For example, if we eventually integrate LLM APIs, relevant HTTP clients and serde will be added.

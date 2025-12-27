@@ -1,18 +1,22 @@
 [refactor]
-name = "example_refactor"
-output_format = "tar" # or "directory"
+name = "decl_macro_refactor"
+output_format = "directory" # Or "tar", depends on preference
 
-[[splits]]
-pattern = "fn calculate_"
-wrap_with = ["prelude", "mkdecl"]
-imports = ["std::collections::*"]
-
-[[splits]]
-pattern = "struct.*Config"
-wrap_with = ["mkdecl"]
-imports = ["serde::{Serialize, Deserialize}"]
+[decl_refactoring]
+target_paths = ["patch-build-rs-macros/src/*.rs"]
+macro_crate_name = "introspector_decl2_macros"
+main_macro_lib_path = "patch-build-rs-macros/src/lib.rs"
+main_macro_invocation_modules = [
+    "rust_nix", "rustc_ring", "lmfdb_morph", "sat_lfunction", "dao_governance",
+    "solana_lift", "quant_trading", "mev_protection", "event_memory", "graph_partition",
+    "context_knapsack", "zk_proof", "lean4_proof", "lean4_json", "lean4_mirror",
+    "quine_relay", "emoji_poetry", "rust_eigenmatrix", "real_rustc_analysis",
+    "rustc_tracer", "compiler_inventory", "duplicate_analysis", "real_data_analysis",
+    "mkbuildrs", "macro_lattice", "repo_analysis", "macro_generator",
+    "template_checker", "ollama_macros"
+]
 
 [export]
 target_dir = "./refactored_code"
-create_tar = true
+create_tar = false # Not needed for this refactor, but can be true if desired
 tar_name = "refactored.tar.gz"

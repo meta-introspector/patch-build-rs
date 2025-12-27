@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "find_rustc_source_impl", vis = "pub", hash = "2ddd0c2a")]
 pub fn find_rustc_source_impl(input: TokenStream) -> TokenStream {
     let _input_str = parse_macro_input!(input as LitStr);
     
@@ -100,6 +101,7 @@ pub fn find_rustc_source_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "analyze_real_source_impl", vis = "pub", hash = "8fa19f26")]
 pub fn analyze_real_source_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let source_path = input_str.value();
@@ -229,6 +231,7 @@ pub fn analyze_real_source_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "prove_eigenvalues_impl", vis = "pub", hash = "8d336ae5")]
 pub fn prove_eigenvalues_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let analysis_data = input_str.value();

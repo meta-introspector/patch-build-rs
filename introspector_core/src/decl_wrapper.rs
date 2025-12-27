@@ -7,7 +7,9 @@ use syn::{
 };
 use quote::ToTokens;
 
-#[derive(Debug, Clone)]
+const DECL_USE_STATEMENT: &str = "use patch_build_rs_macros::decl;";
+
+#[decl(struct, name = "DeclMetadata", vis = "pub", hash = "1b3f6c17")]
 pub struct DeclMetadata {
     pub node_type: NodeType,
     pub name: String,
@@ -23,7 +25,7 @@ pub struct DeclMetadata {
     pub semantic_hash: String,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[decl(enum, name = "NodeType", vis = "pub", hash = "e8a169d5")]
 pub enum NodeType {
     Function,
     Struct,
@@ -73,6 +75,7 @@ impl NodeType {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[decl(enum, name = "VisibilityKind", vis = "pub", hash = "834c6e48")]
 pub enum VisibilityKind {
     Public,
     Crate,
@@ -94,6 +97,7 @@ impl VisibilityKind {
 }
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "FieldInfo", vis = "pub", hash = "0eb70a2e")]
 pub struct FieldInfo {
     pub name: Option<String>,
     pub ty: String,
@@ -101,6 +105,7 @@ pub struct FieldInfo {
 }
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "WrapAction", vis = "pub", hash = "cde2f8bf")]
 pub struct WrapAction {
     pub line_start: usize,
     pub line_end: usize,
@@ -163,6 +168,7 @@ fn compute_semantic_hash(content: &str) -> String {
     format!("{:016x}", hasher.finish())
 }
 
+#[decl(fn, name = "extract_fn_metadata", vis = "pub", hash = "c49987ef")]
 fn extract_fn_metadata(item: &ItemFn, line: usize) -> DeclMetadata {
     let params: Vec<String> = item.sig.inputs.iter().map(|arg| {
         match arg {
@@ -203,6 +209,7 @@ fn extract_fn_metadata(item: &ItemFn, line: usize) -> DeclMetadata {
     }
 }
 
+#[decl(fn, name = "extract_struct_metadata", vis = "pub", hash = "b8630732")]
 fn extract_struct_metadata(item: &ItemStruct, line: usize) -> DeclMetadata {
     let fields: Vec<FieldInfo> = match &item.fields {
         Fields::Named(named) => {
@@ -238,6 +245,7 @@ fn extract_struct_metadata(item: &ItemStruct, line: usize) -> DeclMetadata {
     }
 }
 
+#[decl(fn, name = "extract_enum_metadata", vis = "pub", hash = "202e7751")]
 fn extract_enum_metadata(item: &ItemEnum, line: usize) -> DeclMetadata {
     let variants: Vec<String> = item.variants.iter()
         .map(|v| v.ident.to_string())
@@ -259,6 +267,7 @@ fn extract_enum_metadata(item: &ItemEnum, line: usize) -> DeclMetadata {
     }
 }
 
+#[decl(fn, name = "extract_trait_metadata", vis = "pub", hash = "8098c3e8")]
 fn extract_trait_metadata(item: &ItemTrait, line: usize) -> DeclMetadata {
     let methods: Vec<String> = item.items.iter()
         .filter_map(|i| {
@@ -286,6 +295,7 @@ fn extract_trait_metadata(item: &ItemTrait, line: usize) -> DeclMetadata {
     }
 }
 
+#[decl(fn, name = "extract_impl_metadata", vis = "pub", hash = "fb4a9840")]
 fn extract_impl_metadata(item: &ItemImpl, line: usize) -> DeclMetadata {
     let self_ty = item.self_ty.to_token_stream().to_string();
     let trait_name = item.trait_.as_ref()
@@ -430,44 +440,44 @@ pub fn generate_decl_wrapper(metadata: &DeclMetadata) -> String {
         "[]".to_string()
     } else {
         let fields: Vec<String> = metadata.fields.iter()
-            .map(|f| format!("{{\"name\":\"{}\",\"ty\":\"{}\"}}", 
+            .map(|f| format!("{{\"name\":\"{{}}\",\"ty\":\"{{}}\"}}", 
                 f.name.as_deref().unwrap_or("_"), 
                 f.ty.replace("\"", "\\\"")))
             .collect();
-        format!("[{}]", fields.join(","))
+        format!("[{}]", fields.join(','))
     };
     
     let variants_json = if metadata.variants.is_empty() {
         "[]".to_string()
     } else {
         format!("[{}]", metadata.variants.iter()
-            .map(|v| format!("\"{}\"", v))
+            .map(|v| format!("\"{{}}\"", v))
             .collect::<Vec<_>>()
-            .join(","))
+            .join(','))
     };
     
     let methods_json = if metadata.methods.is_empty() {
         "[]".to_string()
     } else {
         format!("[{}]", metadata.methods.iter()
-            .map(|m| format!("\"{}\"", m))
+            .map(|m| format!("\"{{}}\"", m))
             .collect::<Vec<_>>()
-            .join(","))
+            .join(','))
     };
     
     format!(
-        r#"decl! {{
-    node_type: "{}",
-    name: "{}",
-    visibility: "{}",
-    line: {},
-    generics: {:?},
-    hash: "{}",
-    fields: {},
-    variants: {},
-    methods: {},
-    doc: {:?},
-}}"#,
+        r###"decl! {{ 
+    node_type: \"{{}}\",
+    name: \"{{}}\",
+    visibility: \"{{}}\",
+    line: {{}},
+    generics: {{:?}},
+    hash: \"{{}}\",
+    fields: {{}},
+    variants: {{}},
+    methods: {{}},
+    doc: {{:?}},
+}}"###,
         metadata.node_type.as_str(),
         metadata.name,
         metadata.visibility.as_str(),
@@ -483,7 +493,7 @@ pub fn generate_decl_wrapper(metadata: &DeclMetadata) -> String {
 
 pub fn generate_decl_attribute(metadata: &DeclMetadata) -> String {
     format!(
-        "#[decl({}, name = \"{}\", vis = \"{}\", hash = \"{}\")]",
+        "#[decl({{}}), name = \"{{}}\", vis = \"{{}}\", hash = \"{{}}\"",
         metadata.node_type.as_str(),
         metadata.name,
         metadata.visibility.as_str(),
@@ -493,16 +503,16 @@ pub fn generate_decl_attribute(metadata: &DeclMetadata) -> String {
 
 pub fn generate_inventory_registration(metadata: &DeclMetadata) -> String {
     format!(
-        r#"inventory::submit! {{
-    DeclInfo {{
+        r###"inventory::submit! {{ 
+    DeclInfo {{ 
         node_type: NodeType::{:?},
-        name: "{}",
+        name: \"{{}}\",
         module: module_path!(),
         file: file!(),
-        line: {},
-        hash: "{}",
+        line: {{}},
+        hash: \"{{}}\",
     }}
-}}"#,
+}}"###,
         metadata.node_type,
         metadata.name,
         metadata.line,
@@ -535,7 +545,7 @@ pub fn wrap_public_declarations(content: &str) -> Vec<WrapAction> {
         }
         
         let attr = generate_decl_attribute(&decl);
-        let wrapped = format!("{}\n{}", attr, original);
+        let wrapped = format!("{}\n{{}}", attr, original);
         
         actions.push(WrapAction {
             line_start: decl.line,
@@ -550,20 +560,46 @@ pub fn wrap_public_declarations(content: &str) -> Vec<WrapAction> {
 }
 
 pub fn apply_decl_wrappers(path: &Path) -> Result<usize, std::io::Error> {
-    let content = fs::read_to_string(path)?;
-    let actions = wrap_public_declarations(&content);
+    let mut content = fs::read_to_string(path)?;
+    
+    // Check if the use statement is present
+    if !content.contains(DECL_USE_STATEMENT) {
+        let mut lines: Vec<String> = content.lines().map(String::from).collect();
+        let mut inserted = false;
+        // Find a suitable place after potential attributes, comments or shebang
+        for (i, line) in lines.iter().enumerate() {
+            // Skip shebang
+            if i == 0 && line.starts_with("#!") {
+                continue;
+            }
+            // Skip comments and empty lines
+            if line.trim().starts_with("//") || line.trim().is_empty() || line.trim().starts_with("#[") {
+                continue;
+            }
+            
+            // Insert before the first non-comment, non-empty, non-attribute line
+            lines.insert(i, DECL_USE_STATEMENT.to_string());
+            lines.insert(i + 1, "".to_string()); // Add a newline for formatting
+            inserted = true;
+            break;
+        }
+        if !inserted {
+            // If the file is empty or only comments/shebangs, add to the very top
+            lines.insert(0, DECL_USE_STATEMENT.to_string());
+            lines.insert(1, "".to_string()); // Add a newline for formatting
+        }
+        content = lines.join("\n"); // Update content after insertion
+    }
+
+    let actions = wrap_public_declarations(&content); // Pass the potentially modified content
     
     if actions.is_empty() {
         return Ok(0);
     }
     
-    let lines: Vec<&str> = content.lines().collect();
+    let lines: Vec<String> = content.lines().map(String::from).collect(); // Re-read lines from modified content
     let mut result = Vec::new();
-    let mut skip_next = std::collections::HashSet::new();
-    
-    for action in &actions {
-        skip_next.insert(action.line_start);
-    }
+    let mut declarations_added = 0;
     
     let action_map: std::collections::HashMap<usize, &WrapAction> = 
         actions.iter().map(|a| (a.line_start, a)).collect();
@@ -572,13 +608,14 @@ pub fn apply_decl_wrappers(path: &Path) -> Result<usize, std::io::Error> {
         let line_num = i + 1;
         if let Some(action) = action_map.get(&line_num) {
             result.push(action.wrapped.clone());
+            declarations_added += 1;
         } else {
             result.push(line.to_string());
         }
     }
     
     fs::write(path, result.join("\n"))?;
-    Ok(actions.len())
+    Ok(declarations_added)
 }
 
 pub fn preview_decl_wrappers(path: &Path) -> String {
@@ -586,28 +623,28 @@ pub fn preview_decl_wrappers(path: &Path) -> String {
     let actions = wrap_public_declarations(&content);
     
     let mut output = String::new();
-    output.push_str(&format!("📁 File: {}\n", path.display()));
+    output.push_str(&format!("📁 File: {{}}\n", path.display()));
     output.push_str(&format!("🔍 Found {} public declarations to wrap\n\n", actions.len()));
     
     for action in &actions {
         output.push_str(&format!(
-            "┌─ Line {}: {} {} `{}`\n",
+            "┌─ Line {{}}: {{}} {{}} `{{}}`\n",
             action.line_start,
             action.metadata.node_type.emoji(),
             action.metadata.node_type.as_str(),
             action.metadata.name
         ));
-        output.push_str(&format!("│ Hash: {}\n", &action.metadata.semantic_hash[..16]));
+        output.push_str(&format!("│ Hash: {{}}\n", &action.metadata.semantic_hash[..16]));
         if !action.metadata.fields.is_empty() {
-            output.push_str(&format!("│ Fields: {}\n", action.metadata.fields.len()));
+            output.push_str(&format!("│ Fields: {{}}\n", action.metadata.fields.len()));
         }
         if !action.metadata.methods.is_empty() {
-            output.push_str(&format!("│ Methods: {:?}\n", action.metadata.methods));
+            output.push_str(&format!("│ Methods: {{:?}}\n", action.metadata.methods));
         }
-        output.push_str(&format!("│ Before: {}\n", action.original.trim()));
+        output.push_str(&format!("│ Before: {{}}\n", action.original.trim()));
         output.push_str(&format!("│ After:\n"));
         for line in action.wrapped.lines() {
-            output.push_str(&format!("│   {}\n", line));
+            output.push_str(&format!("│   {{}}\n", line));
         }
         output.push_str("└────────────────────────────────────────\n\n");
     }
@@ -621,16 +658,16 @@ pub fn generate_declarations_json(path: &Path) -> String {
     
     let items: Vec<String> = decls.iter().map(|d| {
         format!(
-            r#"  {{
-    "type": "{}",
-    "name": "{}",
-    "visibility": "{}",
-    "line": {},
-    "hash": "{}",
-    "fields": {},
-    "variants": {},
-    "methods": {}
-  }}"#,
+            r###"  {{ 
+    \"type\": \"{{}}\",
+    \"name\": \"{{}}\",
+    \"visibility\": \"{{}}\",
+    \"line\": {},
+    \"hash\": \"{{}}\",
+    \"fields\": {},
+    \"variants\": {},
+    \"methods\": {}
+  }}"###,
             d.node_type.as_str(),
             d.name,
             d.visibility.as_str(),
@@ -642,22 +679,23 @@ pub fn generate_declarations_json(path: &Path) -> String {
         )
     }).collect();
     
-    format!("[\n{}\n]", items.join(",\n"))
+    format!("[\n{}
+]", items.join(",\n"))
 }
 
 #[macro_export]
 macro_rules! wrap_decls {
-    ($path:expr) => {{
+    ($path:expr) => {{ 
         let path = std::path::Path::new($path);
         let preview = $crate::decl_wrapper::preview_decl_wrappers(path);
-        eprintln!("{}", preview);
-    }};
+        eprintln!("{{}}", preview);
+    }}; 
     
-    ($path:expr, apply) => {{
+    ($path:expr, apply) => {{ 
         let path = std::path::Path::new($path);
-        match $crate::decl_wrapper::apply_decl_wrappers(path) {
-            Ok(count) => eprintln!("✅ Wrapped {} declarations in {}", count, $path),
-            Err(e) => eprintln!("❌ Error: {}", e),
+        match $crate::decl_wrapper::apply_decl_wrappers(path) {{
+            Ok(count) => eprintln!("✅ Wrapped {{}} declarations in {{}}", count, $path),
+            Err(e) => eprintln!("❌ Error: {{}}", e),
         }
     }};
 }
@@ -668,11 +706,11 @@ mod tests {
 
     #[test]
     fn test_extract_function() {
-        let code = r#"
+        let code = r###" 
 pub fn hello_world(name: &str) -> String {
-    format!("Hello, {}!", name)
+    format!("Hello, {{}}", name)
 }
-"#;
+"###;
         let decls = extract_declarations(code);
         assert_eq!(decls.len(), 1);
         assert_eq!(decls[0].node_type, NodeType::Function);
@@ -682,12 +720,12 @@ pub fn hello_world(name: &str) -> String {
 
     #[test]
     fn test_extract_struct() {
-        let code = r#"
+        let code = r###" 
 pub struct User {
     pub name: String,
     pub age: u32,
 }
-"#;
+"###;
         let decls = extract_declarations(code);
         assert_eq!(decls.len(), 1);
         assert_eq!(decls[0].node_type, NodeType::Struct);
@@ -696,13 +734,13 @@ pub struct User {
 
     #[test]
     fn test_extract_enum() {
-        let code = r#"
+        let code = r###" 
 pub enum Status {
     Active,
     Inactive,
     Pending,
 }
-"#;
+"###;
         let decls = extract_declarations(code);
         assert_eq!(decls.len(), 1);
         assert_eq!(decls[0].node_type, NodeType::Enum);

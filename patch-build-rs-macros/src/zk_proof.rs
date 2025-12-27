@@ -11,6 +11,7 @@ use syn::{parse_macro_input, LitStr};
 // UNV-002: Metaphorical Monster group reference (196883)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+#[decl(fn, name = "zk_witness_impl", vis = "pub", hash = "55aee10a")]
 pub fn zk_witness_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let graph_data = input_str.value();
@@ -84,6 +85,7 @@ impl GraphWitness {{
     }.into()
 }
 
+#[decl(fn, name = "plonk_circuit_impl", vis = "pub", hash = "1e600237")]
 pub fn plonk_circuit_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let circuit_desc = input_str.value();
@@ -158,6 +160,7 @@ impl<F: Field> RustcMorphismCircuit<F> {{
     }.into()
 }
 
+#[decl(fn, name = "stark_proof_impl", vis = "pub", hash = "8682a9fa")]
 pub fn stark_proof_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _execution_trace = input_str.value();
@@ -226,6 +229,7 @@ impl RustcSTARK {{
     }.into()
 }
 
+#[decl(fn, name = "snark_verify_impl", vis = "pub", hash = "e0970718")]
 pub fn snark_verify_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let proof_data = input_str.value();

@@ -137,6 +137,7 @@ fn {}_test_{i}() {{
 }
 
 #[cfg(feature = "gen-tests")]
+#[decl(struct, name = "Spec", vis = "pub", hash = "12b196fd")]
 pub struct Spec<'a> {
     spec: &'a str,
 }
@@ -149,6 +150,7 @@ impl<'a> Spec<'a> {
 }
 
 #[cfg(feature = "gen-tests")]
+#[decl(struct, name = "TestCase", vis = "pub", hash = "00874d50")]
 pub struct TestCase {
     pub original: String,
     pub expected: String,

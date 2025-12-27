@@ -10,6 +10,7 @@ use crate::expr_cache::{EXPR_CACHE, SUBEXPR_COUNTS, SUBEXPR_LATTICE}; // Import 
 /// The core inductive type for representing Rust expressions, similar to Lean4's `Expr`.
 /// This allows for total reflection of the code into a manipulable data structure.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)] // Add Serialize, Deserialize
+#[decl(enum, name = "Expr", vis = "pub", hash = "de036b3d")]
 pub enum Expr {
     /// A variable, identified by name.
     Var(String),
@@ -141,6 +142,5 @@ impl Expr {
         current_hash
     }
 }
-
 
 

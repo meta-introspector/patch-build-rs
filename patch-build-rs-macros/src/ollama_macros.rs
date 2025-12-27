@@ -13,6 +13,7 @@ use syn::punctuated::Punctuated;
 /// - `ollama!("model-info", "gemma3:12b")`
 /// - `ollama!("model-version", "gemma3:12b")`
 /// - `ollama!("temp", "0.8")`
+#[decl(fn, name = "ollama_impl", vis = "pub", hash = "8b6f8d81")]
 pub fn ollama_impl(input: TokenStream) -> TokenStream {
     let args = parse_macro_input!(input with Punctuated::<LitStr, Token![,]>::parse_terminated);
 

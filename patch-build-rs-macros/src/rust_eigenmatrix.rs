@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "rust_eigenmatrix_impl", vis = "pub", hash = "781ad46c")]
 pub fn rust_eigenmatrix_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_version = input_str.value();
@@ -88,6 +89,7 @@ pub fn rust_eigenmatrix_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "source_to_emoji_impl", vis = "pub", hash = "0a727f22")]
 pub fn source_to_emoji_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let source_path = input_str.value();
@@ -154,6 +156,7 @@ pub fn source_to_emoji_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "eigenform_verify_impl", vis = "pub", hash = "e08384d5")]
 pub fn eigenform_verify_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let eigenmatrix = input_str.value();

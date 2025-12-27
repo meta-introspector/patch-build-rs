@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "RustcNixInfo", vis = "pub", hash = "c11c79f6")]
 pub struct RustcNixInfo {
     pub version: String,
     pub store_path: String,
@@ -14,6 +15,7 @@ pub struct RustcNixInfo {
 }
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "RustcSourceStats", vis = "pub", hash = "cb3cb97f")]
 pub struct RustcSourceStats {
     pub total_files: usize,
     pub rust_files: usize,
@@ -37,6 +39,7 @@ impl Default for RustcNixInfo {
     }
 }
 
+#[decl(fn, name = "find_current_rustc", vis = "pub", hash = "b40d822a")]
 pub fn find_current_rustc() -> Result<RustcNixInfo, String> {
     let mut info = RustcNixInfo::default();
     
@@ -114,6 +117,7 @@ pub fn find_current_rustc() -> Result<RustcNixInfo, String> {
     Ok(info)
 }
 
+#[decl(fn, name = "unpack_rustc_source", vis = "pub", hash = "17f6ce8b")]
 pub fn unpack_rustc_source(info: &RustcNixInfo, target_dir: &Path) -> Result<PathBuf, String> {
     if info.src_tarball.is_empty() {
         return Err("No source tarball found".to_string());
@@ -152,6 +156,7 @@ pub fn unpack_rustc_source(info: &RustcNixInfo, target_dir: &Path) -> Result<Pat
     Ok(extracted_dir)
 }
 
+#[decl(fn, name = "analyze_rustc_source", vis = "pub", hash = "b71ac192")]
 pub fn analyze_rustc_source(source_dir: &Path) -> Result<RustcSourceStats, String> {
     let mut stats = RustcSourceStats {
         total_files: 0,
@@ -224,6 +229,7 @@ pub fn analyze_rustc_source(source_dir: &Path) -> Result<RustcSourceStats, Strin
     Ok(stats)
 }
 
+#[decl(fn, name = "apply_decl_wrappers_to_rustc", vis = "pub", hash = "8c6261ea")]
 pub fn apply_decl_wrappers_to_rustc(source_dir: &Path, output_dir: &Path) -> Result<usize, String> {
     use crate::decl_wrapper::{extract_declarations, generate_decl_attribute};
     
@@ -288,6 +294,7 @@ pub fn apply_decl_wrappers_to_rustc(source_dir: &Path, output_dir: &Path) -> Res
     Ok(total_wrapped)
 }
 
+#[decl(fn, name = "generate_rustc_introspection_report", vis = "pub", hash = "7c8d404f")]
 pub fn generate_rustc_introspection_report(info: &RustcNixInfo, stats: &RustcSourceStats) -> String {
     let mut report = String::new();
     
@@ -356,6 +363,7 @@ pub fn generate_rustc_introspection_report(info: &RustcNixInfo, stats: &RustcSou
     report
 }
 
+#[decl(fn, name = "print_rustc_info", vis = "pub", hash = "b92771af")]
 pub fn print_rustc_info() {
     match find_current_rustc() {
         Ok(info) => {

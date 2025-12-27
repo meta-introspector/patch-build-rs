@@ -10,6 +10,7 @@ use syn::{parse_macro_input, LitStr};
 // TDO-001: Replace string matching with AST parsing
 // ═══════════════════════════════════════════════════════════════════════════════
 
+#[decl(fn, name = "real_rustc_analysis_impl", vis = "pub", hash = "3a7fcdcf")]
 pub fn real_rustc_analysis_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let source_path = input_str.value();
@@ -129,6 +130,7 @@ pub fn real_rustc_analysis_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "real_duplicate_detection_impl", vis = "pub", hash = "367cc850")]
 pub fn real_duplicate_detection_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let source_path = input_str.value();
@@ -249,6 +251,7 @@ pub fn real_duplicate_detection_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "real_eigenmatrix_impl", vis = "pub", hash = "b0379fe6")]
 pub fn real_eigenmatrix_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let source_path = input_str.value();

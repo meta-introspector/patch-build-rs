@@ -10,6 +10,7 @@ mkbuildrs! {
     exports: ["extract"];
 }
 
+#[decl(fn, name = "extract_impl", vis = "pub", hash = "274392bc")]
 pub fn extract_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let fixme_id = input_str.value();

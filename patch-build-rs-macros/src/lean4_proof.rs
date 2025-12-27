@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "lean4_theorem_impl", vis = "pub", hash = "4f428e6a")]
 pub fn lean4_theorem_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let theorem_name = input_str.value();
@@ -68,6 +69,7 @@ lemma lfunction_convergence (φ : RustcRing → MonsterGroup) (R : RustcRing) :
     }.into()
 }
 
+#[decl(fn, name = "rustc_to_lean_impl", vis = "pub", hash = "e5a399d1")]
 pub fn rustc_to_lean_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rustc_code = input_str.value();
@@ -119,6 +121,7 @@ theorem embedding_preserves_structure (a b : RustcElement) :
     }.into()
 }
 
+#[decl(fn, name = "monster_proof_impl", vis = "pub", hash = "461f5435")]
 pub fn monster_proof_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let claim = input_str.value();
@@ -176,6 +179,7 @@ theorem rustc_moonshine_property :
     }.into()
 }
 
+#[decl(fn, name = "lfunction_proof_impl", vis = "pub", hash = "475f8e75")]
 pub fn lfunction_proof_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let lfunction_data = input_str.value();
@@ -232,6 +236,7 @@ theorem rustc_lfunction_decomposition (R : RustcRing) :
     }.into()
 }
 
+#[decl(fn, name = "formal_verification_impl", vis = "pub", hash = "ae0d8c6a")]
 pub fn formal_verification_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let system_claims = input_str.value();

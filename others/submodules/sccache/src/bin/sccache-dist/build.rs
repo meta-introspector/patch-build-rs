@@ -100,6 +100,7 @@ struct DeflatedToolchain {
     ctime: Instant,
 }
 
+#[decl(struct, name = "OverlayBuilder", vis = "pub", hash = "a2d8ce73")]
 pub struct OverlayBuilder {
     bubblewrap: PathBuf,
     dir: PathBuf,
@@ -482,6 +483,7 @@ fn docker_rm(cid: &str) -> Result<()> {
         .context("Failed to force delete container")
 }
 
+#[decl(struct, name = "DockerBuilder", vis = "pub", hash = "00df0cac")]
 pub struct DockerBuilder {
     image_map: Mutex<HashMap<Toolchain, String>>,
     container_lists: Mutex<HashMap<Toolchain, Vec<String>>>,

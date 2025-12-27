@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "repo_duplicate_analysis_impl", vis = "pub", hash = "eded0f3b")]
 pub fn repo_duplicate_analysis_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let repo_path = input_str.value();
@@ -178,6 +179,7 @@ pub fn repo_duplicate_analysis_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "pattern_similarity_impl", vis = "pub", hash = "276b2c86")]
 pub fn pattern_similarity_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let patterns = input_str.value();

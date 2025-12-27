@@ -9,6 +9,7 @@ use syn::punctuated::Punctuated;
 ///
 /// Usage: `gmp!("derivation_id", "test_passed")`
 #[proc_macro]
+#[decl(fn, name = "gmp", vis = "pub", hash = "66926fc7")]
 pub fn gmp(input: TokenStream) -> TokenStream {
     let args = parse_macro_input!(input with Punctuated::<LitStr, Token![,]>::parse_terminated);
 

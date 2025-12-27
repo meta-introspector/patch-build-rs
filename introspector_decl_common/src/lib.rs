@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::sync::Mutex;
 use once_cell::sync::Lazy;
+use lru::LruCache; // New import
+use std::num::NonZeroUsize; // New import
 
 #[derive(Debug, Clone)]
 pub struct DeclInfo {
@@ -84,4 +86,25 @@ pub fn get_declaration_by_hash(hash: &str) -> Option<DeclInfo> {
         .and_then(|&idx| {
             DECL_REGISTRY.lock().ok()?.declarations.get(idx).cloned()
         })
+}
+
+// Global LRU Cache for storing arbitrary data (e.g., serialized objects)
+pub static LRU_CACHE: Lazy<Mutex<LruCache<String, Vec<u8>>>> = Lazy::new(|| {
+    // Set a default capacity for the LRU cache
+    let capacity = NonZeroUsize::new(1024).expect("Cache capacity must be non-zero");
+    Mutex::new(LruCache::new(capacity))
+});
+
+pub fn store_in_lru_cache(key: String, value: Vec<u8>) {
+    if let Ok(mut cache) = LRU_CACHE.lock() {
+        cache.put(key, value);
+    }
+}
+
+pub fn query_from_lru_cache(key: &str) -> Option<Vec<u8>> {
+    if let Ok(mut cache) = LRU_CACHE.lock() {
+        cache.get(key).cloned()
+    } else {
+        None
+    }
 }

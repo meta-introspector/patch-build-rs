@@ -8,6 +8,7 @@ use crate::cargo_build::CargoBuild;
 
 /// Build the kernel.
 #[derive(Args)]
+#[decl(struct, name = "Build", vis = "pub", hash = "c106db9a")]
 pub struct Build {
 	#[command(flatten)]
 	cargo_build: CargoBuild,

@@ -1,7 +1,9 @@
 extern crate proc_macro;
+use patch_build_rs_macros::decl;
 use proc_macro::TokenStream;
 use quote::quote;
 
+#[decl(fn, name = "biosemiotic_impl", vis = "pub", hash = "4436be89")]
 pub fn biosemiotic_impl(input: TokenStream) -> TokenStream {
     let input_str = input.to_string(); // Get the raw token stream as a string
 

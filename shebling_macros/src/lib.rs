@@ -1,5 +1,5 @@
 extern crate proc_macro;
-
+use patch_build_rs_macros::decl;
 use proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, LitStr, Ident, Token, parse::{Parse, ParseStream}, Result as SynResult};
@@ -38,6 +38,7 @@ impl Parse for SheblingArgs {
 }
 
 #[proc_macro]
+#[decl(fn, name = "shebling", vis = "pub", hash = "66a95163")]
 pub fn shebling(input: TokenStream) -> TokenStream {
     let args = parse_macro_input!(input as SheblingArgs);
     let script_path = args.path.value();
@@ -94,6 +95,7 @@ pub fn shebling(input: TokenStream) -> TokenStream {
 // --- bash! macro definition ---
 
 #[proc_macro]
+#[decl(fn, name = "bash", vis = "pub", hash = "019a5c95")]
 pub fn bash(input: TokenStream) -> TokenStream {
     let script_literal = parse_macro_input!(input as LitStr);
     let script_content = script_literal.value();

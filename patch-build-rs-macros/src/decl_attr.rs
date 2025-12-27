@@ -5,7 +5,8 @@ use syn::{
     ItemConst, ItemType, Attribute, Meta, MetaList, Lit, Ident,
 };
 use introspector_decl_common::{DeclInfo, register_decl};
-
+use introspector_decl2_macros::decl2;
+#[decl2(name = "decl_attr_impl", vis = "pub", hash = "dc3b633e")]
 pub fn decl_attr_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item_clone = item.clone();
     

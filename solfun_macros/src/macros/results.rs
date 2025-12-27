@@ -1,8 +1,10 @@
 extern crate proc_macro;
+use patch_build_rs_macros::decl;
 use proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "results_impl", vis = "pub", hash = "c1a27a24")]
 pub fn results_impl(input: TokenStream) -> TokenStream {
     let output_literal = parse_macro_input!(input as LitStr);
     let span = output_literal.span();

@@ -4,6 +4,7 @@ use syn::{parse_macro_input, LitStr};
 use std::process::Command;
 
 #[proc_macro]
+#[decl(fn, name = "extract_and_wrap", vis = "pub", hash = "c8899103")]
 pub fn extract_and_wrap(input: TokenStream) -> TokenStream {
     let pattern = parse_macro_input!(input as LitStr).value();
     

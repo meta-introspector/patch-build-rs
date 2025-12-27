@@ -3,6 +3,7 @@ use std::sync::Mutex;
 use once_cell::sync::Lazy;
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "AuditTicket", vis = "pub", hash = "e44f1a4e")]
 pub struct AuditTicket {
     pub id: &'static str,
     pub category: TicketCategory,
@@ -15,6 +16,7 @@ pub struct AuditTicket {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[decl(enum, name = "TicketCategory", vis = "pub", hash = "941989a2")]
 pub enum TicketCategory {
     Phony,
     FakeData,
@@ -55,6 +57,7 @@ impl TicketCategory {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[decl(enum, name = "Severity", vis = "pub", hash = "bb5f55f0")]
 pub enum Severity {
     Info,
     Low,
@@ -438,34 +441,40 @@ fn create_ticket_registry() -> HashMap<&'static str, AuditTicket> {
     registry
 }
 
+#[decl(fn, name = "get_ticket", vis = "pub", hash = "7bd660cc")]
 pub fn get_ticket(id: &str) -> Option<AuditTicket> {
     TICKET_REGISTRY.lock().ok()?.get(id).cloned()
 }
 
+#[decl(fn, name = "get_all_tickets", vis = "pub", hash = "2666359a")]
 pub fn get_all_tickets() -> Vec<AuditTicket> {
     TICKET_REGISTRY.lock()
         .map(|r| r.values().cloned().collect())
         .unwrap_or_default()
 }
 
+#[decl(fn, name = "get_tickets_by_category", vis = "pub", hash = "09511110")]
 pub fn get_tickets_by_category(category: TicketCategory) -> Vec<AuditTicket> {
     get_all_tickets().into_iter()
         .filter(|t| t.category == category)
         .collect()
 }
 
+#[decl(fn, name = "get_tickets_by_module", vis = "pub", hash = "aa99f800")]
 pub fn get_tickets_by_module(module: &str) -> Vec<AuditTicket> {
     get_all_tickets().into_iter()
         .filter(|t| t.module == module)
         .collect()
 }
 
+#[decl(fn, name = "get_tickets_by_severity", vis = "pub", hash = "bf2ba8f9")]
 pub fn get_tickets_by_severity(min_severity: Severity) -> Vec<AuditTicket> {
     get_all_tickets().into_iter()
         .filter(|t| t.severity >= min_severity)
         .collect()
 }
 
+#[decl(fn, name = "print_ticket", vis = "pub", hash = "098e04ed")]
 pub fn print_ticket(ticket: &AuditTicket) {
     let reset = "\x1b[0m";
     let cyan = "\x1b[96m";
@@ -490,6 +499,7 @@ pub fn print_ticket(ticket: &AuditTicket) {
     eprintln!("{}└─────────────────────────────────────────────────────────────────┘{}\n", cyan, reset);
 }
 
+#[decl(fn, name = "print_all_tickets", vis = "pub", hash = "ea2f9c0c")]
 pub fn print_all_tickets() {
     let mut tickets = get_all_tickets();
     tickets.sort_by(|a, b| {
@@ -516,6 +526,7 @@ pub fn print_all_tickets() {
     eprintln!("\n{} Total tickets: {}", "📊", tickets.len());
 }
 
+#[decl(fn, name = "generate_clippy_toml", vis = "pub", hash = "727e4dba")]
 pub fn generate_clippy_toml() -> String {
     let tickets = get_all_tickets();
     let mut toml = String::new();

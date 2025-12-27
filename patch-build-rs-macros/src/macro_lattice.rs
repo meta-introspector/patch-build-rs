@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "macro_lattice_impl", vis = "pub", hash = "fa859ff9")]
 pub fn macro_lattice_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let lattice_type = input_str.value();
@@ -124,6 +125,7 @@ Level 14: BUILD SYSTEMS (Infrastructure)
     }.into()
 }
 
+#[decl(fn, name = "lattice_dependencies_impl", vis = "pub", hash = "3fc45704")]
 pub fn lattice_dependencies_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let macro_name = input_str.value();
@@ -198,6 +200,7 @@ Critical Path Analysis:
     }.into()
 }
 
+#[decl(fn, name = "lattice_path_impl", vis = "pub", hash = "bfeaa46f")]
 pub fn lattice_path_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let path_spec = input_str.value();

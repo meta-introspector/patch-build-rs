@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "sat_group_impl", vis = "pub", hash = "1edce13c")]
 pub fn sat_group_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let memory_items = input_str.value();
@@ -46,6 +47,7 @@ c Each item must belong to exactly one group
     }.into()
 }
 
+#[decl(fn, name = "metis_partition_impl", vis = "pub", hash = "76ad6c2e")]
 pub fn metis_partition_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let graph_data = input_str.value();
@@ -88,6 +90,7 @@ pub fn metis_partition_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "memory_select_impl", vis = "pub", hash = "dd25f716")]
 pub fn memory_select_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let selection_criteria = input_str.value();
@@ -130,6 +133,7 @@ pub trait MemoryItemSelector {{
     }.into()
 }
 
+#[decl(fn, name = "code_split_impl", vis = "pub", hash = "96a7bcc0")]
 pub fn code_split_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let partition_data = input_str.value();

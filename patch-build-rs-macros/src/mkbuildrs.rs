@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "mkbuildrs_impl", vis = "pub", hash = "c9fe6d9c")]
 pub fn mkbuildrs_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let config = input_str.value();
@@ -39,6 +40,7 @@ fn main() {
     }.into()
 }
 
+#[decl(fn, name = "nix_rust_version_impl", vis = "pub", hash = "c6cb4b8f")]
 pub fn nix_rust_version_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let version = input_str.value();
@@ -72,6 +74,7 @@ pkgs.rustc.override {{
     }.into()
 }
 
+#[decl(fn, name = "rust_cache_impl", vis = "pub", hash = "2c5c0b09")]
 pub fn rust_cache_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let cache_config = input_str.value();

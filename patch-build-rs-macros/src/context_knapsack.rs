@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "backpack_fill_impl", vis = "pub", hash = "184edd62")]
 pub fn backpack_fill_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let items_data = input_str.value();
@@ -51,6 +52,7 @@ pub fn backpack_fill_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "context_optimize_impl", vis = "pub", hash = "7a973f66")]
 pub fn context_optimize_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _context_items = input_str.value();
@@ -138,6 +140,7 @@ impl ContextOptimizer {{
     }.into()
 }
 
+#[decl(fn, name = "token_weight_impl", vis = "pub", hash = "6239ef14")]
 pub fn token_weight_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let content = input_str.value();
@@ -172,6 +175,7 @@ pub fn token_weight_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "context_compress_impl", vis = "pub", hash = "7e09cb3e")]
 pub fn context_compress_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let full_context = input_str.value();

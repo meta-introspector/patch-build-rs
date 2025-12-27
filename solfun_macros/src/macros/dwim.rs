@@ -3,6 +3,7 @@ use proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "dwim_impl", vis = "pub", hash = "762d0b5a")]
 pub fn dwim_impl(input: TokenStream) -> TokenStream {
     let intent = parse_macro_input!(input as LitStr);
     let span = intent.span();

@@ -18,6 +18,7 @@ use tor_llcrypto::pk::rsa;
 /// This facility is only enabled when the crate is built with
 /// the `build_docs` feature.
 #[cfg_attr(docsrs, doc(cfg(feature = "build_docs")))]
+#[decl(struct, name = "AuthCertBuilder", vis = "pub", hash = "0c20850f")]
 pub struct AuthCertBuilder {
     /// See [`AuthCert::address`]
     address: Option<SocketAddrV4>,

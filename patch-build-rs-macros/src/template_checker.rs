@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr, parse_str};
 
+#[decl(fn, name = "checktemplate_impl", vis = "pub", hash = "2bad40af")]
 pub fn checktemplate_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let template_code = input_str.value();
@@ -30,6 +31,7 @@ pub fn checktemplate_impl(input: TokenStream) -> TokenStream {
     }
 }
 
+#[decl(fn, name = "generate_checked_macros_impl", vis = "pub", hash = "08b7b728")]
 pub fn generate_checked_macros_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _config = input_str.value();
@@ -112,6 +114,7 @@ macro_rules! proc_macro_fn {
     }.into()
 }
 
+#[decl(fn, name = "mkbuildrs_checked_impl", vis = "pub", hash = "315bf7c5")]
 pub fn mkbuildrs_checked_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let config = input_str.value();

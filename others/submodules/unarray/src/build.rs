@@ -13,6 +13,7 @@ use crate::{mark_initialized, uninit_buf};
 ///
 /// For builder functions which might fail, consider using [`build_array_result`] or
 /// [`build_array_option`]
+#[decl(fn, name = "build_array", vis = "pub", hash = "573a0544")]
 pub fn build_array<T, F: FnMut(usize) -> T, const N: usize>(mut f: F) -> [T; N] {
     let mut result = uninit_buf();
 
@@ -42,6 +43,7 @@ pub fn build_array<T, F: FnMut(usize) -> T, const N: usize>(mut f: F) -> [T; N] 
 /// since Rust's notion of "safety" doesn't guarantee destructors are run.
 ///
 /// This is similar to the nightly-only [`core::array::try_from_fn`]
+#[decl(fn, name = "build_array_result", vis = "pub", hash = "a99142db")]
 pub fn build_array_result<T, E, F: FnMut(usize) -> Result<T, E>, const N: usize>(
     mut f: F,
 ) -> Result<[T; N], E> {
@@ -83,6 +85,7 @@ pub fn build_array_result<T, E, F: FnMut(usize) -> Result<T, E>, const N: usize>
 /// since Rust's notion of "safety" doesn't guarantee destructors are run.
 ///
 /// This is similar to the nightly-only [`core::array::try_from_fn`]
+#[decl(fn, name = "build_array_option", vis = "pub", hash = "7ac8f0d4")]
 pub fn build_array_option<T, F: FnMut(usize) -> Option<T>, const N: usize>(
     mut f: F,
 ) -> Option<[T; N]> {

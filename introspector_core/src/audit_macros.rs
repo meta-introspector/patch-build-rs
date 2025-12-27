@@ -2,6 +2,7 @@ use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
 #[derive(Debug, Clone, Default)]
+#[decl(struct, name = "AuditStats", vis = "pub", hash = "32560e10")]
 pub struct AuditStats {
     pub fixme_count: usize,
     pub phony_count: usize,
@@ -14,6 +15,7 @@ pub struct AuditStats {
 }
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "AuditEntry", vis = "pub", hash = "ed6ffa75")]
 pub struct AuditEntry {
     pub kind: AuditKind,
     pub message: String,
@@ -23,6 +25,7 @@ pub struct AuditEntry {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[decl(enum, name = "AuditKind", vis = "pub", hash = "32e60230")]
 pub enum AuditKind {
     Fixme,
     Phony,
@@ -73,6 +76,7 @@ impl AuditKind {
 
 pub static AUDIT_REGISTRY: Lazy<Mutex<AuditStats>> = Lazy::new(|| Mutex::new(AuditStats::default()));
 
+#[decl(fn, name = "register_audit", vis = "pub", hash = "11183f59")]
 pub fn register_audit(kind: AuditKind, message: &str, file: &'static str, line: u32, column: u32) {
     if let Ok(mut stats) = AUDIT_REGISTRY.lock() {
         match kind {
@@ -94,6 +98,7 @@ pub fn register_audit(kind: AuditKind, message: &str, file: &'static str, line: 
     }
 }
 
+#[decl(fn, name = "print_audit_warning", vis = "pub", hash = "53749765")]
 pub fn print_audit_warning(kind: AuditKind, message: &str, file: &str, line: u32) {
     let reset = "\x1b[0m";
     eprintln!(
@@ -108,6 +113,7 @@ pub fn print_audit_warning(kind: AuditKind, message: &str, file: &str, line: u32
     );
 }
 
+#[decl(fn, name = "print_audit_summary", vis = "pub", hash = "f95f6f67")]
 pub fn print_audit_summary() {
     if let Ok(stats) = AUDIT_REGISTRY.lock() {
         let reset = "\x1b[0m";
@@ -171,10 +177,12 @@ pub fn print_audit_summary() {
     }
 }
 
+#[decl(fn, name = "get_audit_stats", vis = "pub", hash = "599003ee")]
 pub fn get_audit_stats() -> Option<AuditStats> {
     AUDIT_REGISTRY.lock().ok().map(|s| s.clone())
 }
 
+#[decl(fn, name = "get_audits_by_kind", vis = "pub", hash = "2fbcefeb")]
 pub fn get_audits_by_kind(kind: AuditKind) -> Vec<AuditEntry> {
     AUDIT_REGISTRY
         .lock()
@@ -183,6 +191,7 @@ pub fn get_audits_by_kind(kind: AuditKind) -> Vec<AuditEntry> {
         .unwrap_or_default()
 }
 
+#[decl(fn, name = "clear_audits", vis = "pub", hash = "28fb0532")]
 pub fn clear_audits() {
     if let Ok(mut stats) = AUDIT_REGISTRY.lock() {
         *stats = AuditStats::default();

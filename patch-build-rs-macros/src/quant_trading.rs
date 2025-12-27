@@ -8,7 +8,8 @@ use syn::{parse_macro_input, LitStr};
 // PHO-007: Template trading system (not a real trading system)
 // FKD-006: Hardcoded sample prices (145.32, 43250.67, etc.)
 // ═══════════════════════════════════════════════════════════════════════════════
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "quant_impl", vis = "pub", hash = "f61e3ac4")]
 pub fn quant_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let strategy = input_str.value();
@@ -84,6 +85,7 @@ impl QuantStrategy {{
     }.into()
 }
 
+#[decl2(fn, name = "trading_impl", vis = "pub", hash = "829cd48f")]
 pub fn trading_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let market_data = input_str.value();
@@ -143,6 +145,7 @@ impl TradingEngine {{
     }.into()
 }
 
+#[decl2(fn, name = "load_historical_impl", vis = "pub", hash = "2e4c1dc4")]
 pub fn load_historical_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let data_source = input_str.value();

@@ -1,4 +1,5 @@
 extern crate proc_macro;
+use patch_build_rs_macros::decl;
 use proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::{parse_macro_input, LitStr, Token, parse::{Parse, ParseStream}, Result as SynResult};
@@ -18,6 +19,7 @@ impl Parse for ToolCallArgs {
     }
 }
 
+#[decl(fn, name = "toolcall_impl", vis = "pub", hash = "c02aaffd")]
 pub fn toolcall_impl(input: TokenStream) -> TokenStream {
     let args = parse_macro_input!(input as ToolCallArgs);
 

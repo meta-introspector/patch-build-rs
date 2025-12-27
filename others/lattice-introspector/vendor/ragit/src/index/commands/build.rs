@@ -23,6 +23,7 @@ use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use tokio::sync::mpsc;
 
+#[decl(struct, name = "BuildResult", vis = "pub", hash = "a5236cd3")]
 pub struct BuildResult {
     pub success: usize,
 

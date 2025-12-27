@@ -7,6 +7,7 @@ use syn::{parse_macro_input, LitStr, Item}; // Added Item
 // use serde_json; // For serializing Expr for hashing
 
 
+#[decl(fn, name = "compiler_inventory_impl", vis = "pub", hash = "892478f5")]
 pub fn compiler_inventory_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let config = input_str.value();

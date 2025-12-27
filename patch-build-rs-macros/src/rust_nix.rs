@@ -1,7 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "nix_rust_src_impl", vis = "pub", hash = "ba79e3cf")]
 pub fn nix_rust_src_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {
@@ -23,6 +24,7 @@ pub fn nix_rust_src_impl(_input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "extract_decl_impl", vis = "pub", hash = "e544fc67")]
 pub fn extract_decl_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_file = input_str.value();
@@ -49,6 +51,7 @@ pub fn extract_decl_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "patch_rust_impl", vis = "pub", hash = "28c77f76")]
 pub fn patch_rust_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let patch_desc = input_str.value();

@@ -22,6 +22,7 @@ use crate::solve::{Certainty, Goal, GoalSource, QueryResult, inspect};
 /// Building the proof tree for a single evaluation step happens via the
 /// [EvaluationStepBuilder] which is updated by the `EvalCtxt` when
 /// appropriate.
+#[decl(struct, name = "ProofTreeBuilder", vis = "pub", hash = "412ef3c4")]
 pub struct ProofTreeBuilder<D, I = <D as SolverDelegate>::Interner>
 where
     D: SolverDelegate<Interner = I>,
@@ -81,6 +82,7 @@ impl<D: SolverDelegate<Interner = I>, I: Interner> ProofTreeBuilder<D> {
     }
 }
 
+#[decl(struct, name = "EvaluationStepBuilder", vis = "pub", hash = "271e83f2")]
 pub struct EvaluationStepBuilder<D, I = <D as SolverDelegate>::Interner>
 where
     D: SolverDelegate<Interner = I>,

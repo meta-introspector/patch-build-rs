@@ -53,6 +53,7 @@ impl Parse for ProcessMatchInput {
 }
 
 #[proc_macro]
+#[decl(fn, name = "process_match", vis = "pub", hash = "c80b5286")]
 pub fn process_match(input: TokenStream) -> TokenStream {
     let ProcessMatchInput {
         file,

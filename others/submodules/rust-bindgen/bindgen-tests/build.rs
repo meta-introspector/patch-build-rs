@@ -4,6 +4,7 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::{Path, PathBuf};
 
+#[decl(fn, name = "main", vis = "pub", hash = "8ef88eea")]
 pub fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let mut dst = File::create(Path::new(&out_dir).join("tests.rs")).unwrap();

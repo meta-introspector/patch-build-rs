@@ -10,6 +10,7 @@ mkbuildrs! {
     exports: ["value"];
 }
 
+#[decl(fn, name = "value_impl", vis = "pub", hash = "5e0a98a2")]
 pub fn value_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let bounty_amount = input_str.value();

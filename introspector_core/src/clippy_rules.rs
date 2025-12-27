@@ -1,6 +1,7 @@
 use crate::audit_tickets::{AuditTicket, TicketCategory, Severity, get_all_tickets};
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "ClippyRule", vis = "pub", hash = "0e255083")]
 pub struct ClippyRule {
     pub name: String,
     pub ticket_id: &'static str,
@@ -11,6 +12,7 @@ pub struct ClippyRule {
 }
 
 #[derive(Debug, Clone)]
+#[decl(enum, name = "LintPattern", vis = "pub", hash = "dfd653b8")]
 pub enum LintPattern {
     StringLiteral(&'static str),
     Regex(&'static str),
@@ -20,6 +22,7 @@ pub enum LintPattern {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[decl(enum, name = "Applicability", vis = "pub", hash = "85e6c897")]
 pub enum Applicability {
     MachineApplicable,
     MaybeIncorrect,
@@ -27,6 +30,7 @@ pub enum Applicability {
     Unspecified,
 }
 
+#[decl(fn, name = "generate_lint_rules", vis = "pub", hash = "f80e334e")]
 pub fn generate_lint_rules() -> Vec<ClippyRule> {
     vec![
         // PHO-001: Fabricated VFS statistics
@@ -219,6 +223,7 @@ pub fn generate_lint_rules() -> Vec<ClippyRule> {
     ]
 }
 
+#[decl(fn, name = "generate_suggested_fixes_report", vis = "pub", hash = "a99fcc5c")]
 pub fn generate_suggested_fixes_report() -> String {
     let rules = generate_lint_rules();
     let mut report = String::new();
@@ -243,6 +248,7 @@ pub fn generate_suggested_fixes_report() -> String {
     report
 }
 
+#[decl(fn, name = "check_code_for_violations", vis = "pub", hash = "b92ae4c3")]
 pub fn check_code_for_violations(code: &str) -> Vec<(ClippyRule, usize)> {
     let rules = generate_lint_rules();
     let mut violations = Vec::new();
@@ -270,6 +276,7 @@ pub fn check_code_for_violations(code: &str) -> Vec<(ClippyRule, usize)> {
     violations
 }
 
+#[decl(fn, name = "print_violation", vis = "pub", hash = "33a63a1f")]
 pub fn print_violation(rule: &ClippyRule, line: usize, file: &str) {
     let reset = "\x1b[0m";
     let yellow = "\x1b[93m";
@@ -286,6 +293,7 @@ pub fn print_violation(rule: &ClippyRule, line: usize, file: &str) {
     eprintln!();
 }
 
+#[decl(fn, name = "generate_rustfix_json", vis = "pub", hash = "61f3285b")]
 pub fn generate_rustfix_json(violations: &[(ClippyRule, usize)], file: &str) -> String {
     use std::fmt::Write;
     let mut json = String::from("[\n");

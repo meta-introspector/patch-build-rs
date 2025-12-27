@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "lean4_to_rust_impl", vis = "pub", hash = "5569884d")]
 pub fn lean4_to_rust_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let lean4_syntax = input_str.value();
@@ -103,6 +104,7 @@ macro_rules! lean4_expr {{
     }.into()
 }
 
+#[decl(fn, name = "rust_to_lean4_impl", vis = "pub", hash = "2a31cbbd")]
 pub fn rust_to_lean4_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_macro = input_str.value();
@@ -136,6 +138,7 @@ pub fn rust_to_lean4_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "proof_simulate_impl", vis = "pub", hash = "641321d7")]
 pub fn proof_simulate_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let proof_json = input_str.value();
@@ -214,6 +217,7 @@ impl ProofSimulator {{
     }.into()
 }
 
+#[decl(fn, name = "lean4_macro_bridge_impl", vis = "pub", hash = "2a31ec59")]
 pub fn lean4_macro_bridge_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let bridge_config = input_str.value();

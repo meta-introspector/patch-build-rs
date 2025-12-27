@@ -13,6 +13,7 @@ mkbuildrs! {
 ///          node_0 :child node_1
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "GrastTriple", vis = "pub", hash = "5fa5b99d")]
 pub struct GrastTriple {
     pub subject: String,
     pub predicate: String,

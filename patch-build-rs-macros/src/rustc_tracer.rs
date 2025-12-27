@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "trace_rustc_impl", vis = "pub", hash = "8d913e5d")]
 pub fn trace_rustc_impl(input: TokenStream) -> TokenStream {
     let _input_str = parse_macro_input!(input as LitStr);
     
@@ -118,6 +119,7 @@ pub fn trace_rustc_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "custom_rust_driver_impl", vis = "pub", hash = "f622bd41")]
 pub fn custom_rust_driver_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let config = input_str.value();
@@ -221,6 +223,7 @@ fi
     }.into()
 }
 
+#[decl(fn, name = "auto_source_setup_impl", vis = "pub", hash = "f3c98693")]
 pub fn auto_source_setup_impl(input: TokenStream) -> TokenStream {
     let _input_str = parse_macro_input!(input as LitStr);
     

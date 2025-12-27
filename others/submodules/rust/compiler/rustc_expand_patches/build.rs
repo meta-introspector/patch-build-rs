@@ -21,12 +21,14 @@ use toml_edit::{self, Document, Table}; // Import Document and Table from toml_e
 /// --- Configuration Structures for Edit Jobs ---
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "EditJobConfig", vis = "pub", hash = "54d41fac")]
 pub struct EditJobConfig {
     pub edits: Vec<EditJob>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
+#[decl(enum, name = "EditJob", vis = "pub", hash = "74f33c7a")]
 pub enum EditJob {
     AddUse(AddUseDetails),
     RemoveFunction(RemoveFunctionDetails),
@@ -41,6 +43,7 @@ pub enum EditJob {
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "AddUseDetails", vis = "pub", hash = "5da0b580")]
 pub struct AddUseDetails {
     pub target_file: PathBuf,
     pub path: String, // e.g., "use super::error::AppError;"
@@ -48,6 +51,7 @@ pub struct AddUseDetails {
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(enum, name = "AddUsePosition", vis = "pub", hash = "d336341d")]
 pub enum AddUsePosition {
     #[serde(rename = "start")]
     Start,
@@ -58,12 +62,14 @@ pub enum AddUsePosition {
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "RemoveFunctionDetails", vis = "pub", hash = "f102264d")]
 pub struct RemoveFunctionDetails {
     pub target_file: PathBuf,
     pub function_name: String,
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "ReplaceExpressionDetails", vis = "pub", hash = "bed16452")]
 pub struct ReplaceExpressionDetails {
     pub target_file: PathBuf,
     pub function_name: String, // Function containing the expression
@@ -72,6 +78,7 @@ pub struct ReplaceExpressionDetails {
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "AddFunctionDetails", vis = "pub", hash = "91833729")]
 pub struct AddFunctionDetails {
     pub target_file: PathBuf,
     pub function_code: String, // Full code of the function to add
@@ -79,36 +86,42 @@ pub struct AddFunctionDetails {
 
 // New struct for adding any Item (struct, enum, function, impl, etc.)
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "AddItemDetails", vis = "pub", hash = "e1e7721e")]
 pub struct AddItemDetails {
     pub target_file: PathBuf,
     pub item_code: String, // Full code of the item to add
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "ReplaceFileContentDetails", vis = "pub", hash = "526a6d16")]
 pub struct ReplaceFileContentDetails {
     pub target_file: PathBuf,
     pub new_content: String,
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "ReplaceFileContentFromFileDetails", vis = "pub", hash = "6af2c75b")]
 pub struct ReplaceFileContentFromFileDetails {
     pub target_file: PathBuf,
     pub source_file: PathBuf,
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "RunSearchDetails", vis = "pub", hash = "adc7dbbd")]
 pub struct RunSearchDetails {
     pub command: String, // The shell command to execute, e.g., "rg rocksdb Cargo.toml"
     pub output_file: Option<PathBuf>, // Optional file to save the output to
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "RemoveCargoDependencyDetails", vis = "pub", hash = "10f3b1ee")]
 pub struct RemoveCargoDependencyDetails {
     pub target_file: PathBuf, // Path to the Cargo.toml file
     pub package_name: String, // Name of the dependency package to remove or member path from workspace.members
 }
 
 #[derive(Debug, Deserialize)]
+#[decl(struct, name = "RemoveUseDetails", vis = "pub", hash = "5d5036bd")]
 pub struct RemoveUseDetails {
     pub target_file: PathBuf,
     pub use_path: String, // The path inside the use statement, e.g., "rocksdb::{Options, DB}"

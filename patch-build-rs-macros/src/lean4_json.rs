@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "lean4_expr_json_impl", vis = "pub", hash = "45fba3f5")]
 pub fn lean4_expr_json_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let lean4_expr = input_str.value();
@@ -51,6 +52,7 @@ pub fn lean4_expr_json_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "rustc_lean4_bridge_impl", vis = "pub", hash = "f11b601c")]
 pub fn rustc_lean4_bridge_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rustc_structure = input_str.value();
@@ -96,6 +98,7 @@ pub fn rustc_lean4_bridge_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "lean4_patch_impl", vis = "pub", hash = "1ebce52b")]
 pub fn lean4_patch_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let patch_description = input_str.value();
@@ -187,6 +190,7 @@ end Lean.Expr
     }.into()
 }
 
+#[decl(fn, name = "json_monster_proof_impl", vis = "pub", hash = "de4341c4")]
 pub fn json_monster_proof_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let proof_name = input_str.value();

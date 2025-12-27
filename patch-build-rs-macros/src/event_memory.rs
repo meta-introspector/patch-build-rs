@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "nix_event_impl", vis = "pub", hash = "5eadfd4e")]
 pub fn nix_event_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let package = input_str.value();
@@ -29,6 +30,7 @@ pub fn nix_event_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "github_event_impl", vis = "pub", hash = "2eb33304")]
 pub fn github_event_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let repo = input_str.value();
@@ -56,6 +58,7 @@ pub fn github_event_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "archive_event_impl", vis = "pub", hash = "98d37693")]
 pub fn archive_event_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let url = input_str.value();
@@ -74,6 +77,7 @@ pub fn archive_event_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "huggingface_event_impl", vis = "pub", hash = "05948575")]
 pub fn huggingface_event_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let model = input_str.value();
@@ -92,6 +96,7 @@ pub fn huggingface_event_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "twitter_event_impl", vis = "pub", hash = "9e24288b")]
 pub fn twitter_event_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let hashtag = input_str.value();
@@ -110,6 +115,7 @@ pub fn twitter_event_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "telegram_event_impl", vis = "pub", hash = "c6e98ffc")]
 pub fn telegram_event_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let channel = input_str.value();

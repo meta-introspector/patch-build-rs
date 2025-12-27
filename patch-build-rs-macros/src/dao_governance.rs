@@ -9,7 +9,8 @@ use syn::{parse_macro_input, LitStr};
 // FKD-004: Hardcoded governance counts (1000, 500, 100)
 // CON-001: Conceptual Paxos (single-node simulation, not distributed)
 // ═══════════════════════════════════════════════════════════════════════════════
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "dao_vote_impl", vis = "pub", hash = "86482c9b")]
 pub fn dao_vote_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let proposal = input_str.value();
@@ -44,6 +45,7 @@ pub fn dao_vote_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "paxos_consensus_impl", vis = "pub", hash = "fbfc0991")]
 pub fn paxos_consensus_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let patch_data = input_str.value();
@@ -73,6 +75,7 @@ pub fn paxos_consensus_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "apply_patch_impl", vis = "pub", hash = "6c0766b6")]
 pub fn apply_patch_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let patch_vector = input_str.value();
@@ -107,6 +110,7 @@ pub fn apply_patch_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "token_governance_impl", vis = "pub", hash = "7ae06f3a")]
 pub fn token_governance_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let token_amount = input_str.value();

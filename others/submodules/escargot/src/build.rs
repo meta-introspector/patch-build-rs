@@ -25,6 +25,7 @@ use crate::test::CargoTest;
 ///     .unwrap();
 /// ```
 #[derive(Debug)]
+#[decl(struct, name = "CargoBuild", vis = "pub", hash = "43bd54f1")]
 pub struct CargoBuild {
     cmd: process::Command,
     bin: bool,

@@ -27,12 +27,14 @@ use termcolor::{ColorChoice, StandardStream, WriteColor};
 ///
 /// This structure transitively contains all configuration for the build system.
 
+#[decl(struct, name = "BuilderConfig", vis = "pub", hash = "e9a9e5a8")]
 pub struct BuilderConfig {
     #[cfg(feature = "build-metrics")]
     metrics: crate::utils::metrics::BuildMetrics,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[decl(enum, name = "DependencyType", vis = "pub", hash = "3353594f")]
 pub enum DependencyType {
     /// Libraries originating from proc-macros.
     Host,
@@ -47,6 +49,7 @@ pub enum DependencyType {
 /// These entries currently correspond to the various output directories of the
 /// build system, with each mod generating output in a different directory.
 #[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[decl(enum, name = "Mode", vis = "pub", hash = "57a8ebe5")]
 pub enum Mode {
     /// Build the standard library, placing output in the "stageN-std" directory.
     Std,

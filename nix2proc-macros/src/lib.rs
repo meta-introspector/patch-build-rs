@@ -1,3 +1,4 @@
+use patch_build_rs_macros::decl;
 use proc_macro::TokenStream;
 use quote::quote;
 use std::fs;
@@ -33,6 +34,7 @@ mod macro_args {
 /// `let rustc_paths: Vec<String> = find_nix_rustc!();`
 /// `let rustc_filtered_paths: Vec<String> = find_nix_rustc!("1.91");`
 #[proc_macro]
+#[decl(fn, name = "find_nix_rustc", vis = "pub", hash = "9ccd7a99")]
 pub fn find_nix_rustc(input: TokenStream) -> TokenStream {
     let args = parse_macro_input!(input as macro_args::FindRustcArgs);
     let filter_str = args.filter.map(|lit| lit.value());

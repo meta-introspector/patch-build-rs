@@ -10,6 +10,7 @@ mkbuildrs! {
     exports: ["ticket"];
 }
 
+#[decl(fn, name = "ticket_impl", vis = "pub", hash = "532cde74")]
 pub fn ticket_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let issue_desc = input_str.value();

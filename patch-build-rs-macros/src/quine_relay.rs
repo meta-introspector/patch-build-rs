@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "language_quine_impl", vis = "pub", hash = "a2f1aef2")]
 pub fn language_quine_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let language = input_str.value();
@@ -54,6 +55,7 @@ macro_rules! unknown_quine {
     }.into()
 }
 
+#[decl(fn, name = "compiler_macro_impl", vis = "pub", hash = "c38288b9")]
 pub fn compiler_macro_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let compiler = input_str.value();
@@ -86,6 +88,7 @@ macro_rules! {}_compile {{
     }.into()
 }
 
+#[decl(fn, name = "bootstrap_cycle_impl", vis = "pub", hash = "a5105c28")]
 pub fn bootstrap_cycle_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _cycle_desc = input_str.value();
@@ -129,6 +132,7 @@ impl BootstrapCycle {
     }.into()
 }
 
+#[decl(fn, name = "automorphic_orbit_impl", vis = "pub", hash = "3f53d389")]
 pub fn automorphic_orbit_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _orbit_config = input_str.value();

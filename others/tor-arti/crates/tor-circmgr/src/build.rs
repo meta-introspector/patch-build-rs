@@ -381,6 +381,7 @@ impl<R: Runtime, C: Buildable + Sync + Send + 'static> Builder<R, C> {
 ///
 /// In general, you should not need to construct or use this object yourself,
 /// unless you are choosing your own paths.
+#[decl(struct, name = "TunnelBuilder", vis = "pub", hash = "02bd57a6")]
 pub struct TunnelBuilder<R: Runtime> {
     /// The underlying [`Builder`] object
     builder: Arc<Builder<R, ClientTunnel>>,
@@ -623,6 +624,7 @@ fn circparameters_from_netparameters(
 
 /// Extract a [`CircParameters`] from the [`NetParameters`] from a consensus for an exit circuit or
 /// single onion service (when implemented).
+#[decl(fn, name = "exit_circparams_from_netparams", vis = "pub", hash = "604b2f18")]
 pub fn exit_circparams_from_netparams(inp: &NetParameters) -> Result<CircParameters> {
     let alg = match AlgorithmType::from(inp.cc_alg.get()) {
         #[cfg(feature = "flowctl-cc")]
@@ -645,6 +647,7 @@ pub fn exit_circparams_from_netparams(inp: &NetParameters) -> Result<CircParamet
 
 /// Extract a [`CircParameters`] from the [`NetParameters`] from a consensus for an onion circuit
 /// which also includes an onion service with Vanguard.
+#[decl(fn, name = "onion_circparams_from_netparams", vis = "pub", hash = "0cacb443")]
 pub fn onion_circparams_from_netparams(inp: &NetParameters) -> Result<CircParameters> {
     let alg = match AlgorithmType::from(inp.cc_alg.get()) {
         #[cfg(feature = "flowctl-cc")]

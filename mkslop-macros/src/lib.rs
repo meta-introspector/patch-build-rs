@@ -9,6 +9,7 @@ use quote::ToTokens;
 /// format string issues, but its core logic (`fix_cfg_format_string`) is
 /// currently unresolved. For now, it simply returns its string literal input.
 #[proc_macro]
+#[decl(fn, name = "mkslop", vis = "pub", hash = "76320453")]
 pub fn mkslop(input: TokenStream) -> TokenStream {
     // Parse the input as a single LitStr
     let input_lit = parse_macro_input!(input as LitStr);

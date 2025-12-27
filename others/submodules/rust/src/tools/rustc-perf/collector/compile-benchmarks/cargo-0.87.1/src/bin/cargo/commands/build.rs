@@ -2,6 +2,7 @@ use crate::command_prelude::*;
 
 use cargo::ops;
 
+#[decl(fn, name = "cli", vis = "pub", hash = "36db4e41")]
 pub fn cli() -> Command {
     subcommand("build")
         // subcommand aliases are handled in aliased_command()
@@ -46,6 +47,7 @@ pub fn cli() -> Command {
         ))
 }
 
+#[decl(fn, name = "exec", vis = "pub", hash = "75bed989")]
 pub fn exec(gctx: &mut GlobalContext, args: &ArgMatches) -> CliResult {
     let ws = args.workspace(gctx)?;
     let mut compile_opts =

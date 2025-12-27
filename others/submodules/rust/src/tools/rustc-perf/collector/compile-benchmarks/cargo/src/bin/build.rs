@@ -6,6 +6,7 @@ use cargo::util::important_paths::{find_root_manifest_for_wd};
 use cargo::util::{CliResult, Config};
 
 #[derive(Deserialize)]
+#[decl(struct, name = "Options", vis = "pub", hash = "b6bedaa4")]
 pub struct Options {
     flag_package: Vec<String>,
     flag_jobs: Option<u32>,
@@ -37,6 +38,7 @@ pub struct Options {
     flag_z: Vec<String>,
 }
 
+#[decl(const, name = "USAGE", vis = "pub", hash = "38156f06")]
 pub const USAGE: &'static str = "
 Compile a local package and all of its dependencies
 
@@ -87,6 +89,7 @@ the manifest. The default profile for this command is `dev`, but passing
 the --release flag will use the `release` profile instead.
 ";
 
+#[decl(fn, name = "execute", vis = "pub", hash = "5e087c93")]
 pub fn execute(options: Options, config: &mut Config) -> CliResult {
     debug!("executing; cmd=cargo-build; args={:?}",
            env::args().collect::<Vec<_>>());

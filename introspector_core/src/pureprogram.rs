@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 /// The `set` contains the unique numerical identifiers of the program's components.
 /// The `name` is a human-readable identifier.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[decl(struct, name = "PureProgram", vis = "pub", hash = "4ff006f5")]
 pub struct PureProgram {
     pub set: BTreeSet<u64>,
     pub name: String,
@@ -18,4 +19,3 @@ impl PureProgram {
         }
     }
 }
-

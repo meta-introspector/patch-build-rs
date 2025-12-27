@@ -27,6 +27,7 @@ use crate::validate::Error;
 /// This type is intended to be created by `From` trait implementations, and
 /// to be passed to [`Builder::port`] method.
 #[derive(Debug, Clone)]
+#[decl(struct, name = "Builder", vis = "pub", hash = "2dba9f70")]
 pub struct PortBuilder<'a>(PortBuilderRepr<'a>);
 
 impl Default for PortBuilder<'_> {
@@ -85,6 +86,7 @@ enum PortBuilderRepr<'a> {
 /// This type is intended to be created by `From` trait implementations, and
 /// to be passed to [`Builder::userinfo`] method.
 #[derive(Clone)]
+#[decl(struct, name = "UserinfoBuilder", vis = "pub", hash = "85a82a7a")]
 pub struct UserinfoBuilder<'a>(UserinfoRepr<'a>);
 
 impl Default for UserinfoBuilder<'_> {
@@ -971,6 +973,7 @@ impl<'a> Builder<'a> {
 /// [`Into`]: `core::convert::Into`
 /// [`Display`]: `core::fmt::Display`
 #[derive(Debug)]
+#[decl(struct, name = "Built", vis = "pub", hash = "993677a5")]
 pub struct Built<'a, T: ?Sized> {
     /// Builder with the validated content.
     builder: Builder<'a>,
@@ -1050,6 +1053,7 @@ impl_stringifiers!(RiAbsoluteStr, RiAbsoluteString);
 impl_stringifiers!(RiRelativeStr, RiRelativeString);
 
 /// A trait for borrowed IRI string types buildable by the [`Builder`].
+#[decl(trait, name = "Buildable", vis = "pub", hash = "30ce7922")]
 pub trait Buildable<'a>: private::Sealed<'a> {}
 
 impl<'a, S: Spec> private::Sealed<'a> for RiReferenceStr<S> {

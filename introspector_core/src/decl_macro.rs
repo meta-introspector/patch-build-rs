@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use introspector_decl_common::{get_all_declarations, DeclInfo};
 
+#[decl(fn, name = "print_declaration_summary", vis = "pub", hash = "5990104a")]
 pub fn print_declaration_summary() {
     let decls = get_all_declarations();
     let reset = "\x1b[0m";
@@ -49,6 +50,7 @@ pub fn print_declaration_summary() {
     }
 }
 
+#[decl(fn, name = "generate_rdf_declarations", vis = "pub", hash = "aa5f62fe")]
 pub fn generate_rdf_declarations() -> String {
     let decls = get_all_declarations();
     let mut rdf = String::new();

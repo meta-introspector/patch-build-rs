@@ -60,7 +60,7 @@ fn main() {
             cmd_diff(current_path);
         }
         "tickets" => {
-            let filter = path_arg.map(|s| s.as_str());
+            let filter = path_arg;
             cmd_tickets(filter);
         }
         "ticket" => {

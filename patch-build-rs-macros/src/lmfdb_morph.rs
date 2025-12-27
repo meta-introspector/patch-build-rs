@@ -1,7 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "load_lmfdb_impl", vis = "pub", hash = "ab562b89")]
 pub fn load_lmfdb_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let query = input_str.value();
@@ -28,6 +29,7 @@ pub fn load_lmfdb_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "conformal_map_impl", vis = "pub", hash = "3d364cc6")]
 pub fn conformal_map_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_graph = input_str.value();
@@ -63,6 +65,7 @@ pub fn conformal_map_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "hott_morph_impl", vis = "pub", hash = "3c342609")]
 pub fn hott_morph_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_structure = input_str.value();
@@ -91,6 +94,7 @@ pub fn hott_morph_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "monster_check_impl", vis = "pub", hash = "e0eba061")]
 pub fn monster_check_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {

@@ -4,6 +4,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use std::collections::BTreeSet;
 use proc_macro2::TokenStream; // Explicitly import TokenStream
 
+#[decl(trait, name = "NewQuoteTrait", vis = "pub", hash = "852a05ae")]
 pub trait NewQuoteTrait {
     fn to_expr(&self) -> Expr;
 }

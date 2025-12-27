@@ -2,6 +2,7 @@ use crate::audit_macros::{AuditKind, register_audit, print_audit_summary};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "MacroDefinition", vis = "pub", hash = "5caf2682")]
 pub struct MacroDefinition {
     pub name: String,
     pub kind: MacroKind,
@@ -12,6 +13,7 @@ pub struct MacroDefinition {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[decl(enum, name = "MacroKind", vis = "pub", hash = "df2d976e")]
 pub enum MacroKind {
     ProcMacro,
     ProcMacroAttribute,
@@ -33,12 +35,14 @@ impl MacroKind {
 }
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "AuditFlag", vis = "pub", hash = "61ba6352")]
 pub struct AuditFlag {
     pub kind: AuditKind,
     pub message: String,
 }
 
 #[derive(Debug, Clone, Default)]
+#[decl(struct, name = "MacroReport", vis = "pub", hash = "7c45cf9e")]
 pub struct MacroReport {
     pub total_proc_macros: usize,
     pub total_macro_rules: usize,
@@ -49,6 +53,7 @@ pub struct MacroReport {
 }
 
 #[derive(Debug, Clone, Default)]
+#[decl(struct, name = "ModuleStats", vis = "pub", hash = "69015702")]
 pub struct ModuleStats {
     pub name: String,
     pub proc_macro_count: usize,
@@ -59,6 +64,7 @@ pub struct ModuleStats {
 }
 
 #[derive(Debug, Clone, Default)]
+#[decl(struct, name = "AuditSummary", vis = "pub", hash = "e8b8aec0")]
 pub struct AuditSummary {
     pub phony_modules: Vec<String>,
     pub fakedata_locations: Vec<String>,
@@ -67,6 +73,7 @@ pub struct AuditSummary {
     pub concerns: Vec<String>,
 }
 
+#[decl(fn, name = "generate_macro_report", vis = "pub", hash = "1857f535")]
 pub fn generate_macro_report() -> MacroReport {
     let mut report = MacroReport::default();
     
@@ -193,6 +200,7 @@ pub fn generate_macro_report() -> MacroReport {
     report
 }
 
+#[decl(fn, name = "print_macro_report", vis = "pub", hash = "9206a7d7")]
 pub fn print_macro_report(report: &MacroReport) {
     let reset = "\x1b[0m";
     let cyan = "\x1b[96m";
@@ -290,6 +298,7 @@ pub fn print_macro_report(report: &MacroReport) {
     eprintln!("{}╚══════════════════════════════════════════════════════════════════╝{}\n", cyan, reset);
 }
 
+#[decl(fn, name = "generate_rdf_turtle_report", vis = "pub", hash = "7adcf315")]
 pub fn generate_rdf_turtle_report(report: &MacroReport) -> String {
     let mut rdf = String::new();
     

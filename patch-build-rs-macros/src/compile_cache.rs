@@ -4,6 +4,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[decl(struct, name = "CompileError", vis = "pub", hash = "7a2f5c14")]
 pub struct CompileError {
     pub file: String,
     pub line: Option<u32>,
@@ -15,6 +16,7 @@ pub struct CompileError {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[decl(struct, name = "CompileCache", vis = "pub", hash = "f0273978")]
 pub struct CompileCache {
     pub errors: HashMap<String, CompileError>,
     pub successful_fixes: HashMap<String, String>, // error_hash -> fix_applied

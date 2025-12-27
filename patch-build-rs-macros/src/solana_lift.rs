@@ -9,7 +9,8 @@ use syn::{parse_macro_input, LitStr};
 // FKD-002: Fake blockhash fallback ('11111111111111111111111111111111')
 // FKD-003: Placeholder block hash ('sample_block_hash')
 // ═══════════════════════════════════════════════════════════════════════════════
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "purchase_blocks_impl", vis = "pub", hash = "6fdf3669")]
 pub fn purchase_blocks_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let api_provider = input_str.value();
@@ -47,6 +48,7 @@ pub fn purchase_blocks_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "lift_int_code_impl", vis = "pub", hash = "08978ec3")]
 pub fn lift_int_code_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let block_data = input_str.value();
@@ -81,6 +83,7 @@ pub fn lift_int_code_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "ca_macro_impl", vis = "pub", hash = "b27fa6b1")]
 pub fn ca_macro_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let contract_address = input_str.value();
@@ -119,6 +122,7 @@ pub fn process_instruction(
     }.into()
 }
 
+#[decl2(fn, name = "token_macro_impl", vis = "pub", hash = "4b17819f")]
 pub fn token_macro_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let token_params = input_str.value();
@@ -164,6 +168,7 @@ impl TokenContract {{
     }.into()
 }
 
+#[decl2(fn, name = "lp_macro_impl", vis = "pub", hash = "8cc3dd18")]
 pub fn lp_macro_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let lp_config = input_str.value();

@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "emoji_poem_impl", vis = "pub", hash = "1b3d15bc")]
 pub fn emoji_poem_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let concept = input_str.value();
@@ -101,6 +102,7 @@ Unknown concept, infinite possibility
     }.into()
 }
 
+#[decl(fn, name = "math_to_emoji_impl", vis = "pub", hash = "d9c2ffb8")]
 pub fn math_to_emoji_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let math_expr = input_str.value();
@@ -141,6 +143,7 @@ pub fn math_to_emoji_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "emoji_to_math_impl", vis = "pub", hash = "395aa08e")]
 pub fn emoji_to_math_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let emoji_expr = input_str.value();
@@ -171,6 +174,7 @@ pub fn emoji_to_math_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "poetry_cycle_impl", vis = "pub", hash = "e7558fed")]
 pub fn poetry_cycle_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _cycle_type = input_str.value();

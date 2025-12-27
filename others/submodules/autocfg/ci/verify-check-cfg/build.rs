@@ -1,5 +1,6 @@
 extern crate autocfg;
 
+#[decl(fn, name = "main", vis = "pub", hash = "48602e43")]
 pub fn main() {
     let cfg = autocfg::AutoCfg::new().unwrap();
 

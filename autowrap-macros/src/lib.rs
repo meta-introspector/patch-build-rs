@@ -4,13 +4,11 @@ use syn::{parse_macro_input, LitStr};
 use std::process::Command;
 use std::fs;
 
-pub mod extract;
-pub mod refactor;
+// pub mod extract;
 
-pub use extract::*;
-pub use refactor::*;
 
 #[proc_macro]
+//#[decl(fn, name = "autowrap", vis = "pub", hash = "4e3e83d7")]
 pub fn autowrap(input: TokenStream) -> TokenStream {
     let code = parse_macro_input!(input as LitStr).value();
     
@@ -78,11 +76,13 @@ mkdecl! {{
 }
 
 #[proc_macro]
+//#[decl(fn, name = "prelude", vis = "pub", hash = "e07e80dc")]
 pub fn prelude(input: TokenStream) -> TokenStream {
     input // Pass through for now
 }
 
 #[proc_macro]
+//#[decl(fn, name = "mkdecl", vis = "pub", hash = "16304589")]
 pub fn mkdecl(input: TokenStream) -> TokenStream {
     input // Pass through for now
 }

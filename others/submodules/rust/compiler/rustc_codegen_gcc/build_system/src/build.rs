@@ -97,6 +97,7 @@ fn cleanup_sysroot_previous_build(library_dir: &Path) {
     );
 }
 
+#[decl(fn, name = "build_sysroot", vis = "pub", hash = "6b0690fd")]
 pub fn build_sysroot(env: &HashMap<String, String>, config: &ConfigInfo) -> Result<(), String> {
     let start_dir = get_sysroot_dir();
 
@@ -217,6 +218,7 @@ fn build_codegen(args: &mut BuildArg) -> Result<(), String> {
 }
 
 /// Executes the build process.
+#[decl(fn, name = "run", vis = "pub", hash = "c3522986")]
 pub fn run() -> Result<(), String> {
     let mut args = match BuildArg::new()? {
         Some(args) => args,

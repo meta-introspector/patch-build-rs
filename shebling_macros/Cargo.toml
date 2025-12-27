@@ -16,6 +16,7 @@ brush-parser = "0.3" # For parsing shell scripts into an AST
 rustsat = "0.7"
 rustsat-batsat = "0.1"
 asdi = "0.2" # For Datalog engine integration
+patch-build-rs-macros = { workspace = true }
 # Add shebling as a path dependency once it's compiled as a library or its output format is understood.
 # For now, we'll assume external execution.
 

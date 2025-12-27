@@ -2,6 +2,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
 
+#[decl(fn, name = "generate_common_macros_impl", vis = "pub", hash = "0d8a5a00")]
 pub fn generate_common_macros_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _config = input_str.value();
@@ -68,6 +69,7 @@ macro_rules! write_file {
     }.into()
 }
 
+#[decl(fn, name = "mkbuildrs_with_macros_impl", vis = "pub", hash = "152b1c84")]
 pub fn mkbuildrs_with_macros_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let config = input_str.value();

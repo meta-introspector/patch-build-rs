@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
-
+use introspector_decl2_macros::decl2;
 // ═══════════════════════════════════════════════════════════════════════════════
 // AUDIT TICKETS: This module generates illustrative MEV protection patterns
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -10,6 +10,7 @@ use syn::{parse_macro_input, LitStr};
 // ISS-003: Not production-ready protection
 // ═══════════════════════════════════════════════════════════════════════════════
 
+#[decl2(fn, name = "sandwich_detect_impl", vis = "pub", hash = "bafc1064")]
 pub fn sandwich_detect_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let tx_pattern = input_str.value();
@@ -49,6 +50,7 @@ macro_rules! exclude_sandwich {{
     }.into()
 }
 
+#[decl2(fn, name = "frontrun_block_impl", vis = "pub", hash = "74bbfa9a")]
 pub fn frontrun_block_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let mempool_data = input_str.value();
@@ -94,6 +96,7 @@ pub fn validate_transaction(gas_price: u64) -> Result<(), &'static str> {{
     }.into()
 }
 
+#[decl2(fn, name = "mev_exclude_impl", vis = "pub", hash = "67f490bc")]
 pub fn mev_exclude_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let mev_patterns = input_str.value();
@@ -153,6 +156,7 @@ fn transaction_matches(pattern: &str) -> bool {{
     }.into()
 }
 
+#[decl2(fn, name = "atomic_swap_impl", vis = "pub", hash = "0ed4b633")]
 pub fn atomic_swap_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let swap_config = input_str.value();

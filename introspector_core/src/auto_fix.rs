@@ -4,6 +4,7 @@ use std::path::Path;
 use regex::Regex;
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "FixAction", vis = "pub", hash = "da210d6f")]
 pub struct FixAction {
     pub ticket_id: &'static str,
     pub line: usize,
@@ -13,6 +14,7 @@ pub struct FixAction {
 }
 
 #[derive(Debug, Clone)]
+#[decl(struct, name = "FixPattern", vis = "pub", hash = "cdc32e6b")]
 pub struct FixPattern {
     pub ticket_id: &'static str,
     pub pattern: Regex,
@@ -21,6 +23,7 @@ pub struct FixPattern {
 }
 
 #[derive(Debug, Clone)]
+#[decl(enum, name = "FixType", vis = "pub", hash = "4ef0bc28")]
 pub enum FixType {
     /// Prepend audit_id! comment before the line
     PrependComment,
@@ -34,6 +37,7 @@ pub enum FixType {
     InsertMacroBefore,
 }
 
+#[decl(fn, name = "get_fix_patterns", vis = "pub", hash = "de8f5a54")]
 pub fn get_fix_patterns() -> Vec<FixPattern> {
     vec![
         // FKD-002: Fake blockhash
@@ -126,6 +130,7 @@ pub fn get_fix_patterns() -> Vec<FixPattern> {
     ]
 }
 
+#[decl(fn, name = "scan_file_for_fixes", vis = "pub", hash = "6c2c406e")]
 pub fn scan_file_for_fixes(path: &Path) -> Vec<FixAction> {
     let content = match fs::read_to_string(path) {
         Ok(c) => c,
@@ -202,6 +207,7 @@ fn generate_fix(pattern: &FixPattern, line: &str, line_num: usize) -> FixAction 
     }
 }
 
+#[decl(fn, name = "apply_fixes_to_file", vis = "pub", hash = "6580eaaa")]
 pub fn apply_fixes_to_file(path: &Path, fixes: &[FixAction]) -> Result<String, std::io::Error> {
     let content = fs::read_to_string(path)?;
     let lines: Vec<&str> = content.lines().collect();
@@ -225,6 +231,7 @@ pub fn apply_fixes_to_file(path: &Path, fixes: &[FixAction]) -> Result<String, s
     Ok(result.join("\n"))
 }
 
+#[decl(fn, name = "apply_fixes_to_file_in_place", vis = "pub", hash = "eb9feb1a")]
 pub fn apply_fixes_to_file_in_place(path: &Path) -> Result<usize, std::io::Error> {
     let fixes = scan_file_for_fixes(path);
     if fixes.is_empty() {
@@ -237,6 +244,7 @@ pub fn apply_fixes_to_file_in_place(path: &Path) -> Result<usize, std::io::Error
     Ok(fixes.len())
 }
 
+#[decl(fn, name = "preview_fixes", vis = "pub", hash = "243d0ebb")]
 pub fn preview_fixes(path: &Path) -> String {
     let fixes = scan_file_for_fixes(path);
     let mut output = String::new();
@@ -254,6 +262,7 @@ pub fn preview_fixes(path: &Path) -> String {
     output
 }
 
+#[decl(fn, name = "generate_diff", vis = "pub", hash = "e768b26b")]
 pub fn generate_diff(path: &Path) -> String {
     let fixes = scan_file_for_fixes(path);
     if fixes.is_empty() {
@@ -289,6 +298,7 @@ pub fn generate_diff(path: &Path) -> String {
     diff
 }
 
+#[decl(fn, name = "scan_directory", vis = "pub", hash = "4d030fbc")]
 pub fn scan_directory(dir: &Path, extensions: &[&str]) -> Vec<(std::path::PathBuf, Vec<FixAction>)> {
     let mut results = Vec::new();
     
@@ -313,6 +323,7 @@ pub fn scan_directory(dir: &Path, extensions: &[&str]) -> Vec<(std::path::PathBu
     results
 }
 
+#[decl(fn, name = "print_scan_summary", vis = "pub", hash = "d56bb568")]
 pub fn print_scan_summary(results: &[(std::path::PathBuf, Vec<FixAction>)]) {
     let reset = "\x1b[0m";
     let cyan = "\x1b[96m";
@@ -353,6 +364,7 @@ pub fn print_scan_summary(results: &[(std::path::PathBuf, Vec<FixAction>)]) {
     }
 }
 
+#[decl(fn, name = "apply_all_fixes", vis = "pub", hash = "2122da6f")]
 pub fn apply_all_fixes(dir: &Path, dry_run: bool) -> Result<usize, std::io::Error> {
     let results = scan_directory(dir, &["rs"]);
     let mut total_applied = 0;

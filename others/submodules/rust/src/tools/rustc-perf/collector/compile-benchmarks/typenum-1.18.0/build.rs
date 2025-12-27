@@ -287,6 +287,7 @@ fn test_{sa}{a}_Cmp_{sb}{b}() {{
         result = a.cmp(&b)
     )
 }
+#[decl(fn, name = "gen_tests", vis = "pub", hash = "968f789c")]
 pub fn gen_tests() -> String {
     // will test all permutations of number pairs up to this (and down to its opposite for ints)
     let high: i64 = 5;
@@ -393,6 +394,7 @@ use core::cmp::Ordering;
         note = "the `no_std` flag is no longer necessary and will be removed in the future"
     )
 )]
+#[decl(fn, name = "no_std", vis = "pub", hash = "cbd7d58f")]
 pub fn no_std() {}
 
 #[cfg_attr(
@@ -402,6 +404,7 @@ pub fn no_std() {}
         note = "the `force_unix_path_separator` flag is no longer necessary and will be removed in the future"
     )
 )]
+#[decl(fn, name = "force_unix_path_separator", vis = "pub", hash = "05a6bb39")]
 pub fn force_unix_path_separator() {}
 
 fn main() {

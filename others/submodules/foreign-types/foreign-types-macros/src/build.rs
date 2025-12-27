@@ -8,6 +8,7 @@ fn ref_name(input: &ForeignType) -> Ident {
     Ident::new(&format!("{}Ref", input.name), input.name.span())
 }
 
+#[decl(fn, name = "build", vis = "pub", hash = "3de2e60d")]
 pub fn build(input: Input) -> TokenStream {
     let types = input
         .types

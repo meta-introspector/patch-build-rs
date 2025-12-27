@@ -25,6 +25,7 @@ pub static SUBEXPR_LATTICE: Lazy<Mutex<HashMap<u64, BTreeSet<u64>>>> = Lazy::new
 });
 
 // Function to save the EXPR_CACHE to a JSON file
+#[decl(fn, name = "write_cache_to_json", vis = "pub", hash = "d3657087")]
 pub fn write_cache_to_json(file_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let cache_guard = EXPR_CACHE.lock().unwrap();
     
@@ -42,6 +43,7 @@ pub fn write_cache_to_json(file_path: &Path) -> Result<(), Box<dyn std::error::E
 }
 
 // Function to load the EXPR_CACHE from a JSON file
+#[decl(fn, name = "load_cache_from_json", vis = "pub", hash = "319d2a2d")]
 pub fn load_cache_from_json(file_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if file_path.exists() {
         let json_string = fs::read_to_string(file_path)?;
@@ -57,11 +59,13 @@ pub fn load_cache_from_json(file_path: &Path) -> Result<(), Box<dyn std::error::
 }
 
 // Function to get a clone of the current subexpression counts
+#[decl(fn, name = "get_subexpr_counts", vis = "pub", hash = "6cb7331a")]
 pub fn get_subexpr_counts() -> HashMap<u64, usize> {
     SUBEXPR_COUNTS.lock().unwrap().clone()
 }
 
 // Function to save the SUBEXPR_COUNTS to a JSON file
+#[decl(fn, name = "write_counts_to_json", vis = "pub", hash = "3beef4da")]
 pub fn write_counts_to_json(file_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let counts_guard = SUBEXPR_COUNTS.lock().unwrap();
     let json_string = serde_json::to_string_pretty(&*counts_guard)?;
@@ -70,6 +74,7 @@ pub fn write_counts_to_json(file_path: &Path) -> Result<(), Box<dyn std::error::
 }
 
 // Function to load SUBEXPR_COUNTS from a JSON file
+#[decl(fn, name = "load_counts_from_json", vis = "pub", hash = "4e14e092")]
 pub fn load_counts_from_json(file_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if file_path.exists() {
         let json_string = fs::read_to_string(file_path)?;
@@ -85,11 +90,13 @@ pub fn load_counts_from_json(file_path: &Path) -> Result<(), Box<dyn std::error:
 }
 
 // Function to get a clone of the current subexpression lattice
+#[decl(fn, name = "get_subexpr_lattice", vis = "pub", hash = "2f65e723")]
 pub fn get_subexpr_lattice() -> HashMap<u64, BTreeSet<u64>> {
     SUBEXPR_LATTICE.lock().unwrap().clone()
 }
 
 // Function to save the SUBEXPR_LATTICE to a JSON file
+#[decl(fn, name = "write_lattice_to_json", vis = "pub", hash = "5d905aef")]
 pub fn write_lattice_to_json(file_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let lattice_guard = SUBEXPR_LATTICE.lock().unwrap();
     let json_string = serde_json::to_string_pretty(&*lattice_guard)?;
@@ -98,6 +105,7 @@ pub fn write_lattice_to_json(file_path: &Path) -> Result<(), Box<dyn std::error:
 }
 
 // Function to load SUBEXPR_LATTICE from a JSON file
+#[decl(fn, name = "load_lattice_from_json", vis = "pub", hash = "98a83f90")]
 pub fn load_lattice_from_json(file_path: &Path) -> Result<(), Box<dyn std::error::Error>> {
     if file_path.exists() {
         let json_string = fs::read_to_string(file_path)?;

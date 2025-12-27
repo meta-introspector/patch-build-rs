@@ -1,10 +1,13 @@
 use syn::LitStr;
+use patch_build_rs_macros::decl;
+
  // Use proc_macro2::Span
 
 /// Applies common auto-fixes to problematic format strings.
 ///
 /// Specifically fixes the `cargo:rustc-cfg={0}="{1}"` pattern
 /// which causes `invalid format string` errors when used with `println!`.
+#[decl(fn, name = "fix_cfg_format_string", vis = "pub", hash = "b5115c3c")]
 pub fn fix_cfg_format_string(input_lit: LitStr) -> LitStr {
     let bad_format_str_value = "cargo:rustc-cfg={0}=\"{1}\"";
 

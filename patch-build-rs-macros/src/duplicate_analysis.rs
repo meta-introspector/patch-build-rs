@@ -10,6 +10,7 @@ use syn::{parse_macro_input, LitStr};
 // FKD-001: Hardcoded hash values (a7f3b2c1, d8e9f4a6, f2b8c4d6)
 // ═══════════════════════════════════════════════════════════════════════════════
 
+#[decl(fn, name = "unified_codebase_impl", vis = "pub", hash = "69f1c6ef")]
 pub fn unified_codebase_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let target_path = input_str.value();
@@ -59,6 +60,7 @@ pub fn unified_codebase_impl(input: TokenStream) -> TokenStream {
 }
 
 // AUDIT: fakedata!("semantic_hash_impl uses hardcoded hash values, not computed hashes")
+#[decl(fn, name = "semantic_hash_impl", vis = "pub", hash = "855bb2b1")]
 pub fn semantic_hash_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let code_item = input_str.value();
@@ -95,6 +97,7 @@ Semantic Hash: f2b8c4d6e1a9f7b3 [FAKEDATA - hardcoded]
     }.into()
 }
 
+#[decl(fn, name = "grast_structural_impl", vis = "pub", hash = "e1ddf121")]
 pub fn grast_structural_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let search_pattern = input_str.value();
@@ -159,6 +162,7 @@ SELECT ?item1 ?item2 ?hash WHERE {{
     }.into()
 }
 
+#[decl(fn, name = "llm_redundancy_impl", vis = "pub", hash = "c5f36a06")]
 pub fn llm_redundancy_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let analysis_request = input_str.value();
@@ -217,6 +221,7 @@ pub fn llm_redundancy_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl(fn, name = "redundancy_stats_impl", vis = "pub", hash = "fadedd48")]
 pub fn redundancy_stats_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let _stats_config = input_str.value();

@@ -237,6 +237,7 @@ impl<'a> NetdocBuilder for HsDescBuilder<'a> {
 /// with the blinded id key `blind_id`.
 ///
 /// This certificate is meant to be passed to [`HsDescBuilder::hs_desc_sign_cert`].
+#[decl(fn, name = "create_desc_sign_key_cert", vis = "pub", hash = "2d9a4e64")]
 pub fn create_desc_sign_key_cert(
     hs_desc_sign: &ed25519::PublicKey,
     blind_id: &HsBlindIdKeypair,

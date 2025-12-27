@@ -1,7 +1,8 @@
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
-
+use introspector_decl2_macros::decl2;
+#[decl2(fn, name = "sat_solve_unity_impl", vis = "pub", hash = "4969396d")]
 pub fn sat_solve_unity_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {
@@ -48,6 +49,7 @@ c Unity constraint (everything maps to 1)
     }.into()
 }
 
+#[decl2(fn, name = "extract_lfunction_impl", vis = "pub", hash = "ea5943b4")]
 pub fn extract_lfunction_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_vector = input_str.value();
@@ -86,6 +88,7 @@ pub fn extract_lfunction_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "matrix_decompose_impl", vis = "pub", hash = "6f4089f4")]
 pub fn matrix_decompose_impl(input: TokenStream) -> TokenStream {
     let input_str = parse_macro_input!(input as LitStr);
     let rust_data = input_str.value();
@@ -117,6 +120,7 @@ pub fn matrix_decompose_impl(input: TokenStream) -> TokenStream {
     }.into()
 }
 
+#[decl2(fn, name = "unity_proof_impl", vis = "pub", hash = "b68f65dd")]
 pub fn unity_proof_impl(_input: TokenStream) -> TokenStream {
     quote! {
         {
