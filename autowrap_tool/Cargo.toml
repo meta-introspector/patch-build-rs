@@ -1,0 +1,15 @@
+[package]
+name = "autowrap_tool"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+toml = { workspace = true }
+glob = { workspace = true }
+walkdir = { workspace = true }
+regex = { workspace = true }
+syn = { workspace = true, features = ["full", "extra-traits", "parsing", "visit"] }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+introspector_macro_helpers = { workspace = true }

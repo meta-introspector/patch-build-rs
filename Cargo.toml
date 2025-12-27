@@ -12,13 +12,15 @@ members = [
     "code-finder", # New crate for demonstrating grep2code morphism
     "shebling_macros", # New crate for shebling! macro
     "solfun_macros", "test_macros_app", # New crate for fun and dev-ops macros
-    "introspector_core", "introspector_decl_common", # Core types for introspection
+    "introspector_core", "introspector_decl_common", "introspector_decl_core", # Core types for introspection
     # Eventually, we will add a binary crate here, e.g., "patch-build-cli"
 ]
 
 [workspace.dependencies]
 syn = { version = "2.0", features = ["full", "extra-traits", "visit-mut"] }
 quote = "1.0"
+glob = "*"
+regex = "*"
 proc-macro2 = "1.0"
 anyhow = "1.0"
 toml = "0.8"
@@ -31,12 +33,18 @@ directories = "5.0"
 walkdir = "2.5"
 shebling_macros = { path = "shebling_macros" }
 patch-build-rs-macros = { path = "patch-build-rs-macros" }
+introspector-decl2-macros = { path = "introspector_decl2_macros" }
+introspector_decl2_macros = { path = "introspector_decl2_macros" }
 mkslop-macros = { path = "mkslop-macros" }
 nix2proc-macros = { path = "nix2proc-macros" }
 introspector_core = { path = "introspector_core" }
 introspector_decl_common = { path = "introspector_decl_common" }
+autowrap-macros = { path = "autowrap-macros" }
 reqwest = "0.11" # Add reqwest to workspace dependencies
 semver = "1.0" # Add semver to workspace dependencies
+autowrap_tool = { path = "autowrap_tool" }
+introspector_macro_helpers = { path = "introspector_macro_helpers" }
+introspector_decl_core = { path = "introspector_decl_core" }
 
 [package]
 name = "patch-build-rs"
@@ -61,7 +69,7 @@ walkdir = { workspace = true }
 inventory = "0.3"
 introspector_core = { workspace = true }
 # Add a dependency to rust-self-heal-core once it's set up and available
-# rust-self-heal-core = { path = "../rust-self-heal-core" }
+# rust-self-heal-core = { path = "rust-self-heal-core" }
 
 [build-dependencies]
 patch-build-rs-macros = { workspace = true }

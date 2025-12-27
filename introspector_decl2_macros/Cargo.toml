@@ -1,0 +1,15 @@
+[package]
+name = "introspector_decl2_macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { workspace = true, features = ["full", "extra-traits", "parsing"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+introspector_decl_common = { workspace=true }
+introspector_macro_helpers = { workspace = true }
+introspector_decl_core = { workspace = true }

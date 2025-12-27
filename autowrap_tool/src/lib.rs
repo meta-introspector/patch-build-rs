@@ -1,0 +1,256 @@
+macro_rules! GetToken {
+    ($token:tt) => {
+        syn::token::$token::new(proc_macro2::Span::call_site())
+    };
+}
+
+struct ImplCallVisitor {
+    calls: std::collections::HashMap<String, std::collections::HashSet<String>>,
+}
+
+impl ImplCallVisitor {
+    fn new(init_calls: std::collections::HashMap<String, std::collections::HashSet<String>>) -> Self {
+        ImplCallVisitor {
+            calls: init_calls,
+        }
+    }
+}
+
+impl<'ast> syn::visit::Visit<'ast> for ImplCallVisitor {
+    fn visit_macro(&mut self, i: &'ast syn::Macro) {
+        if let Some(path_segment) = i.path.segments.last() {
+            let path_str = path_segment.ident.to_string();
+            if path_str.ends_with("_impl") {
+                if let Some(module_ident) = i.path.segments.first() {
+                    let module_name = module_ident.ident.to_string();
+                    let fn_name = path_str;
+                    self.calls.entry(module_name).or_default().insert(fn_name);
+                }
+            }
+        }
+        syn::visit::visit_macro(self, i);
+    }
+}
+
+macro_rules! mkImplCallVisitor {
+    (calls: $init_calls:expr) => {
+        ImplCallVisitor::new($init_calls)
+    };
+}
+use serde::{Deserialize};
+use std::fs;
+use std::process::Command;
+use std::path::{Path, PathBuf};
+use syn::{parse_quote, Ident, Item, Visibility, parse::Parse, parse::ParseStream, Result as SynResult, PathSegment, token};
+use quote::quote;
+use proc_macro2::{self, Span}; // Removed TokenStream from here
+use toml;
+use std::collections::{HashMap, HashSet};
+use introspector_macro_helpers::{is_use_decl_module};
+use syn::visit::{self, Visit}; // For the visitor pattern
+use syn::punctuated::Punctuated; // For Punctuated
+
+
+#[derive(Deserialize)]
+pub struct RefactorConfig {
+    pub refactor: RefactorMeta,
+    #[serde(default)]
+    pub splits: Vec<SplitRule>,
+    pub export: ExportConfig,
+    #[serde(default)]
+    pub decl_refactoring: Option<DeclRefactoringConfig>,
+}
+
+#[derive(Deserialize, Default)]
+pub struct DeclRefactoringConfig {
+    pub target_paths: Vec<String>, // Glob patterns for files to refactor
+    pub macro_crate_name: String, // e.g., "introspector_decl2_macros"
+    pub main_macro_lib_path: Option<String>, // Path to the main lib.rs file (e.g., "patch-build-rs-macros/src/lib.rs")
+    pub main_macro_invocation_modules: Vec<String>, // List of module names for decl_module! invocation
+}
+
+#[derive(Deserialize)]
+pub struct RefactorMeta {
+    pub name: String,
+    pub output_format: String,
+}
+
+#[derive(Deserialize)]
+pub struct SplitRule {
+    pub pattern: String,
+    pub wrap_with: Vec<String>,
+    pub imports: Vec<String>,
+}
+
+#[derive(Deserialize)]
+pub struct ExportConfig {
+    pub target_dir: String,
+    pub create_tar: bool,
+    pub tar_name: String,
+}
+
+pub fn process_refactor_config(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let config_str = fs::read_to_string(config_path)?;
+    let config: RefactorConfig = toml::from_str(&config_str)?;
+    
+    fs::create_dir_all(&config.export.target_dir)?;
+    
+    for (i, rule) in config.splits.iter().enumerate() {
+        let output = Command::new("rg")
+            .args(&["-A", "5", &rule.pattern, ".", "--type", "rust"])
+            .output()?;
+        
+        let matches = String::from_utf8_lossy(&output.stdout);
+        let wrapped_code = wrap_code_with_rule(&matches, rule);
+        
+        let file_path = format!("{}/split_{}.rs", config.export.target_dir, i);
+        fs::write(file_path, wrapped_code)?;
+    }
+    
+    if let Some(decl_config) = config.decl_refactoring.as_ref() {
+        perform_decl_refactoring(decl_config)?;
+    }
+
+    Ok(())
+}
+
+fn perform_decl_refactoring(
+    config: &DeclRefactoringConfig,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let _macro_crate_name_ident = Ident::new(&config.macro_crate_name, proc_macro2::Span::call_site()); // Renamed to _macro_crate_name_ident
+
+    // Handle main_macro_lib_path first
+    if let Some(main_lib_path_str) = &config.main_macro_lib_path {
+        let main_lib_path = PathBuf::from(main_lib_path_str);
+        if main_lib_path.is_file() {
+            println!("Ensuring decl_module! invocation in: {}", main_lib_path.display());
+            let original_code = fs::read_to_string(&main_lib_path)?;
+            let mut syntax_tree = syn::parse_file(&original_code)?;
+
+            // New logic to find module::function_impl calls and generate pub use statements
+            let mut impl_calls: HashMap<String, HashSet<String>> = HashMap::new();
+
+            for item in &mut syntax_tree.items {
+                if let syn::Item::Macro(item_macro) = item {
+                    if item_macro.mac.path.is_ident("proc_macro") { // Heuristic: look inside proc_macro definitions
+                        let body_tokens = item_macro.mac.tokens.clone();
+                        let body_file = syn::parse_file(&body_tokens.to_string())
+                            .unwrap_or_else(|_| syn::parse_file("").unwrap()); // Fallback for unparseable tokens
+                        let mut visitor = ImplCallVisitor::new(HashMap::new());
+                        syn::visit::visit_file(&mut visitor, &body_file);
+                        
+                        for (module_name, fn_names) in visitor.calls {
+                            impl_calls.entry(module_name).or_default().extend(fn_names);
+                        }
+                    }
+                }
+            }
+
+            // Generate and insert pub use statements
+            let mut generated_uses: Vec<syn::ItemUse> = Vec::new();
+            for (module_name, fn_names) in impl_calls {
+                let module_ident = Ident::new(&module_name, Span::call_site());
+                let mut group_items: Punctuated<syn::UseTree, syn::token::Comma> = Punctuated::new(); // Use syn::token::Comma
+                for fn_name in fn_names {
+                    group_items.push(syn::UseTree::Name(syn::UseName { // Use syn::UseName
+                        ident: Ident::new(&fn_name, Span::call_site()),
+                        //as_token: None,
+                    }));
+                }
+                
+                // Construct the use tree
+                let use_tree = if group_items.len() == 1 {
+                    syn::UseTree::Path(
+                        syn::UsePath {
+                            ident: module_ident.clone(), // Use clone to avoid moving
+                            colon2_token: Some(syn::token::Colon2::new(Span::call_site())),
+                            tree: Box::new(group_items.into_iter().next().unwrap())
+                        }
+                    )
+                } else {
+                    syn::UseTree::Group(syn::UseGroup {
+                        brace_token: syn::token::Brace(Span::call_site()), // Corrected field name
+                        items: group_items,
+                    })
+                };
+
+                let item_use: syn::ItemUse = parse_quote! {
+                    pub use #module_ident :: #use_tree;
+                };
+                generated_uses.push(item_use);
+            }
+            syntax_tree.items.splice(0..0, generated_uses.into_iter().map(syn::Item::Use));
+            // End of new logic
+
+
+            let modules_list_idents: Vec<Ident> = config.main_macro_invocation_modules
+                .iter()
+                .map(|s| Ident::new(s, proc_macro2::Span::call_site()))
+                .collect();
+
+            let decl_module_invocation: syn::ItemMacro = parse_quote! {
+                decl_module!(#(#modules_list_idents),*);
+            };
+
+            let decl_module_use: syn::ItemUse = parse_quote! {
+                use introspector_decl2_macros::decl_module;
+            };
+            
+            let mut found_decl_module_use = false;
+            let mut found_decl_module_invocation = false;
+
+            // Check and update existing code
+            for item in &mut syntax_tree.items {
+                if let syn::Item::Use(item_use) = item {
+                    if is_use_decl_module!(item_use) { // Use the helper macro
+                        *item_use = decl_module_use.clone(); // Ensure it's the correct use statement
+                        found_decl_module_use = true;
+                    }
+                } else if let syn::Item::Macro(item_macro) = item {
+                    if item_macro.mac.path.is_ident("decl_module") {
+                        *item_macro = decl_module_invocation.clone(); // Update existing invocation
+                        found_decl_module_invocation = true;
+                    }
+                }
+            }
+
+            // Add if not found
+            if !found_decl_module_use {
+                syntax_tree.items.insert(0, syn::Item::Use(decl_module_use));
+            }
+            if !found_decl_module_invocation {
+                // Find a good place to insert, e.g., after the last use statement
+                let insert_idx = syntax_tree.items.iter().position(|i| matches!(i, syn::Item::Mod(_))).unwrap_or(0);
+                syntax_tree.items.insert(insert_idx, syn::Item::Macro(decl_module_invocation));
+            }
+
+            let modified_code = quote! { #syntax_tree }.to_string();
+            fs::write(&main_lib_path, modified_code)?;
+        }
+    }
+
+
+    Ok(())
+}
+
+
+fn wrap_code_with_rule(code: &str, rule: &SplitRule) -> String {
+    let imports = rule.imports.join("
+");
+    let code_lines: Vec<&str> = code.lines()
+        .filter(|line| !line.starts_with("--") && !line.contains(".rs:"))
+        .collect();
+    
+    format!(r###"\
+prelude! {{ 
+    {}
+
+}}
+
+mkdecl! {{ 
+    {}
+
+}}
+"###, imports, code_lines.join("
+"))
+}

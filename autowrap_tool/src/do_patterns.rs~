@@ -1,0 +1,75 @@
+
+pub fn  do_patterns() {
+    for pattern in &config.target_paths {
+        for entry in glob::glob(pattern)? {
+            let path = entry?;
+            if path.is_file() && path.extension().map_or(false, |ext| ext == "rs") {
+                println!("Refactoring decl macros in: {}", path.display());
+
+                let original_code = fs::read_to_string(&path)?;
+                let mut syntax_tree = syn::parse_file(&original_code)?;
+
+                let mut imports_to_add: HashSet<String> = HashSet::new();
+                imports_to_add.insert(format!("use {}::prelude::*;", macro_crate_name_ident));
+
+                // Collect attributes to modify
+                let mut attributes_to_modify = Vec::new();
+
+                for item_enum in &mut syntax_tree.items {
+                    match item_enum {
+                        Item::Fn(item_fn) => {
+                            for attr in &mut item_fn.attrs {
+                                if let Some(new_attr) = process_decl_attribute(attr, &path, &macro_crate_name_ident)? {
+                                    *attr = new_attr;
+                                    let module_short_name = path.file_stem().unwrap().to_string_lossy().to_string();
+                                    imports_to_add.insert(format!("use {}::decl_{}", macro_crate_name_ident, module_short_name));
+                                }
+                            }
+                        },
+                        Item::Struct(item_struct) => {
+                            for attr in &mut item_struct.attrs {
+                                if let Some(new_attr) = process_decl_attribute(attr, &path, &macro_crate_name_ident)? {
+                                    *attr = new_attr;
+                                    let module_short_name = path.file_stem().unwrap().to_string_lossy().to_string();
+                                    imports_to_add.insert(format!("use {}::decl_{}", macro_crate_name_ident, module_short_name));
+                                }
+                            }
+                        },
+                        Item::Enum(item_enum) => {
+                            for attr in &mut item_enum.attrs {
+                                if let Some(new_attr) = process_decl_attribute(attr, &path, &macro_crate_name_ident)? {
+                                    *attr = new_attr;
+                                    let module_short_name = path.file_stem().unwrap().to_string_lossy().to_string();
+                                    imports_to_add.insert(format!("use {}::decl_{}", macro_crate_name_ident, module_short_name));
+                                }
+                            }
+                        },
+                        Item::Trait(item_trait) => {
+                            for attr in &mut item_trait.attrs {
+                                if let Some(new_attr) = process_decl_attribute(attr, &path, &macro_crate_name_ident)? {
+                                    *attr = new_attr;
+                                    let module_short_name = path.file_stem().unwrap().to_string_lossy().to_string();
+                                    imports_to_add.insert(format!("use {}::decl_{}", macro_crate_name_ident, module_short_name));
+                                }
+                            }
+                        },
+                        _ => {} // Ignore other item types for now
+
+                }
+
+                // Add new use statements if they don't already exist
+                if !imports_to_add.is_empty() {
+                    let new_uses: Vec<syn::ItemUse> = imports_to_add.into_iter().map(|s| {
+                        let tokens: proc_macro2::TokenStream = s.parse().unwrap();
+                        parse_quote! { #tokens }
+                    }).collect();
+
+                    // Prepend new use statements to the file
+                    syntax_tree.items.splice(0..0, new_uses.into_iter().map(Item::Use));
+                }
+                
+                let modified_code = quote! { #syntax_tree }.to_string();
+                fs::write(&path, modified_code)?;
+            }
+        }
+    }

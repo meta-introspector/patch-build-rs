@@ -1,0 +1,320 @@
+use proc_macro::TokenStream;
+use quote::{quote, ToTokens};
+use syn::{parse_macro_input,  ItemFn, ItemStruct, ItemEnum, ItemTrait,  Ident};
+use introspector_decl_common::{DeclInfo, register_decl};
+use introspector_macro_helpers::generate_decl_registration;
+
+// This is the core logic that was previously inside the decl2 attribute macro.
+#[macro_export]
+macro_rules! _decl2_core_logic {
+    ($attr:expr, $item:expr) => {
+        {
+            let item_clone = $item.clone();
+
+            // Parse the attribute arguments
+            let args = parse_macro_input!($attr as crate::DeclArgs); // Use crate::DeclArgs to refer to the local struct
+
+            // Try to parse as different item types and extract metadata
+            if let Ok(mut item_fn) = syn::parse::<syn::ItemFn>(item_clone.clone()) {
+                return crate::wrap_function(&args, &mut item_fn);
+            }
+
+            if let Ok(mut item_struct) = syn::parse::<syn::ItemStruct>(item_clone.clone()) {
+                return crate::wrap_struct(&args, &mut item_struct);
+            }
+
+            if let Ok(mut item_enum) = syn::parse::<syn::ItemEnum>(item_clone.clone()) {
+                return crate::wrap_enum(&args, &mut item_enum);
+            }
+
+            if let Ok(mut item_trait) = syn::parse::<syn::ItemTrait>(item_clone.clone()) {
+                return crate::wrap_trait(&args, &mut item_trait);
+            }
+
+            // If we can't parse, just return the original
+            $item
+        }
+    };
+}
+
+#[proc_macro_attribute]
+pub fn decl2(attr: TokenStream, item: TokenStream) -> TokenStream {
+    _decl2_core_logic!(attr, item)
+}
+
+struct DeclArgs {
+    node_type: Option<String>,
+    name: Option<String>,
+    vis: Option<String>,
+    hash: Option<String>,
+    extra: Vec<(String, String)>,
+}
+
+impl syn::parse::Parse for DeclArgs {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let mut args = DeclArgs {
+            node_type: None,
+            name: None,
+            vis: None,
+            hash: None,
+            extra: vec![],
+        };
+
+        // First token might be the node type
+        if input.peek(syn::Ident) {
+            let ident: Ident = input.parse()?;
+            args.node_type = Some(ident.to_string());
+
+            if input.peek(syn::Token![,]) {
+                input.parse::<syn::Token![,]>()?;
+            }
+        }
+
+        // Parse key = value pairs
+        while !input.is_empty() {
+            let key: Ident = input.parse()?;
+            input.parse::<syn::Token![=]>()?;
+            let value: syn::LitStr = input.parse()?;
+
+            match key.to_string().as_str() {
+                "name" => args.name = Some(value.value()),
+                "vis" => args.vis = Some(value.value()),
+                "hash" => args.hash = Some(value.value()),
+                other => args.extra.push((other.to_string(), value.value())),
+            }
+
+            if input.peek(syn::Token![,]) {
+                input.parse::<syn::Token![,]>()?;
+            }
+        }
+
+        Ok(args)
+    }
+}
+
+fn compute_hash(content: &str) -> String {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+    let mut hasher = DefaultHasher::new();
+    content.hash(&mut hasher);
+    format!("{:08x}", hasher.finish() & 0xFFFFFFFF)
+}
+
+fn wrap_function(args: &DeclArgs, item: &mut ItemFn) -> TokenStream {
+    let name = item.sig.ident.to_string();
+    let hash = args.hash.clone().unwrap_or_else(|| compute_hash(&item.to_token_stream().to_string()));
+
+    let vis_str = match &item.vis {
+        syn::Visibility::Public(_) => "pub",
+        syn::Visibility::Restricted(_) => "pub(restricted)",
+        syn::Visibility::Inherited => "private",
+        syn::Visibility::Crate(_) => "crate",
+    };
+
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
+
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            introspector_macro_helpers::generate_decl_registration!(
+                "fn",
+                #name,
+                #vis_str,
+                #module_path_str,
+                file!(),
+                #line,
+                #hash
+            );
+        };
+    };
+
+    let output = quote! {
+        #item
+        #registration_code
+    };
+
+    output.into()
+}
+
+fn wrap_struct(args: &DeclArgs, item: &mut ItemStruct) -> TokenStream {
+    let name = item.ident.to_string();
+    let hash = args.hash.clone().unwrap_or_else(|| compute_hash(&item.to_token_stream().to_string()));
+
+    let vis_str = match &item.vis {
+        syn::Visibility::Public(_) => "pub",
+        syn::Visibility::Restricted(_) => "pub(restricted)",
+        syn::Visibility::Inherited => "private",
+        syn::Visibility::Crate(_) => "crate",
+    };
+
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
+
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            introspector_macro_helpers::generate_decl_registration!(
+                "struct",
+                #name,
+                #vis_str,
+                #module_path_str,
+                file!(),
+                #line,
+                #hash
+            );
+        };
+    };
+
+    let output = quote! {
+        #item
+        #registration_code
+    };
+
+    output.into()
+}
+
+fn wrap_enum(args: &DeclArgs, item: &mut ItemEnum) -> TokenStream {
+    let name = item.ident.to_string();
+    let hash = args.hash.clone().unwrap_or_else(|| compute_hash(&item.to_token_stream().to_string()));
+
+    let vis_str = match &item.vis {
+        syn::Visibility::Public(_) => "pub",
+        syn::Visibility::Restricted(_) => "pub(restricted)",
+        syn::Visibility::Inherited => "private",
+        syn::Visibility::Crate(_) => "crate",
+    };
+
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
+
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            introspector_macro_helpers::generate_decl_registration!(
+                "enum",
+                #name,
+                #vis_str,
+                #module_path_str,
+                file!(),
+                #line,
+                #hash
+            );
+        };
+    };
+
+    let output = quote! {
+        #item
+        #registration_code
+    };
+
+    output.into()
+}
+
+fn wrap_trait(args: &DeclArgs, item: &mut ItemTrait) -> TokenStream {
+    let name = item.ident.to_string();
+    let hash = args.hash.clone().unwrap_or_else(|| compute_hash(&item.to_token_stream().to_string()));
+
+    let vis_str = match &item.vis {
+        syn::Visibility::Public(_) => "pub",
+        syn::Visibility::Restricted(_) => "pub(restricted)",
+        syn::Visibility::Inherited => "private",
+        syn::Visibility::Crate(_) => "crate",
+    };
+
+    let line = 0 as u32; // Temporary workaround for proc_macro2::Span::start().line issue
+    let module_path_str = module_path!().to_string();
+
+    let registration_code = quote! {
+        // Auto-generated declaration registration
+        const _: () = {
+            introspector_macro_helpers::generate_decl_registration!(
+                "trait",
+                #name,
+                #vis_str,
+                #module_path_str,
+                file!(),
+                #line,
+                #hash
+            );
+        };
+    };
+
+    let output = quote! {
+        #item
+        #registration_code
+    };
+
+    output.into()
+}
+
+// DECL_MODULE START
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
+
+#[proc_macro]
+pub fn decl_module(input: TokenStream) -> TokenStream {
+    let modules = parse_macro_input!(input with Punctuated::<Ident, Comma>::parse_terminated);
+
+    let mut generated_macros = proc_macro2::TokenStream::new();
+    let mut module_names: Vec<String> = Vec::new();
+
+    for module_ident in modules {
+        let module_name_str = module_ident.to_string();
+        module_names.push(module_name_str.clone());
+        let macro_name = Ident::new(&format!("decl_{}", module_name_str), module_ident.span());
+
+        let module_specific_boilerplate = Ident::new(&format!("{}_DEFAULT_MACRO_SET_DEFINED", module_name_str.to_uppercase()), module_ident.span());
+
+        generated_macros.extend(quote! {
+            #[proc_macro_attribute]
+            pub fn #macro_name(attr: proc_macro::TokenStream, item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+                                crate::_decl2_core_logic!(attr, item);
+                            });
+    }
+
+    let module_names_str: Vec<String> = module_names.iter().map(|s| s.to_string()).collect();
+
+    // Generate modules_list! macro
+    let modules_list_output = quote! {
+        #[macro_export]
+        macro_rules! modules_list {
+            () => {
+                &[ #(#module_names_str),* ]
+            };
+        }
+    };
+    generated_macros.extend(modules_list_output);
+
+    // Placeholder for module_members! macro (conceptual)
+    let module_members_output = quote! {
+        #[macro_export]
+        macro_rules! module_members {
+            ($module_name:expr) => {
+                // This would eventually query introspector_decl_common for members of $module_name
+                // For now, it's a placeholder.
+                compile_error!("module_members! is not yet implemented to query actual members.");
+            };
+        }
+    };
+    generated_macros.extend(module_members_output);
+
+    // Generate prelude module
+    let all_decl_macros_re_exports = module_names.iter().map(|module_name_str| {
+        let macro_name = Ident::new(&format!("decl_{}", module_name_str), proc_macro2::Span::call_site());
+        quote! {
+            pub use super::#macro_name;
+        }
+    });
+
+    let prelude_module = quote! {
+        #[macro_export]
+        mod prelude {
+            pub use introspector_decl_common::{DeclInfo, register_decl};
+            #(#all_decl_macros_re_exports)*
+        }
+    };
+    generated_macros.extend(prelude_module);
+
+    generated_macros.into()
+}
